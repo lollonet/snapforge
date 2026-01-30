@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../branding/logo.svg" alt="SnapForge" width="80">
+</p>
+
 # SnapForge Deployment Guide
 
 Complete guide to deploying a SnapForge multiroom audio system.

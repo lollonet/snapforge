@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../branding/logo.svg" alt="SnapForge" width="80">
+</p>
+
 # SnapForge Architecture
 
 This document describes the technical architecture of the SnapForge multiroom audio ecosystem.

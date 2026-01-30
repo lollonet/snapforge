@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../branding/logo.svg" alt="SnapForge" width="80">
+</p>
+
 # 5-Minute Quickstart
 
 > From zero to synchronized music in every room.

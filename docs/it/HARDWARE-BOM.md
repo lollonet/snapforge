@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../branding/logo.svg" alt="SnapForge" width="80">
+</p>
+
 # Guida Hardware SnapForge
 
 Bill of Materials e raccomandazioni hardware per costruire un sistema audio multiroom SnapForge.
