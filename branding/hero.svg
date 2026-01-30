@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400">
   <defs>
     <radialGradient id="h-centerGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" style="stop-color:#FFB347"/>
-      <stop offset="100%" style="stop-color:#FF8C00"/>
+      <stop offset="0%" stop-color="#FFB347"/>
+      <stop offset="100%" stop-color="#FF8C00"/>
     </radialGradient>
     <radialGradient id="h-nodeGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" style="stop-color:#FFCC80"/>
-      <stop offset="100%" style="stop-color:#FF9800"/>
+      <stop offset="0%" stop-color="#FFCC80"/>
+      <stop offset="100%" stop-color="#FF9800"/>
     </radialGradient>
     <linearGradient id="h-bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1A1A2E"/>
-      <stop offset="50%" style="stop-color:#16213E"/>
-      <stop offset="100%" style="stop-color:#1A1A2E"/>
+      <stop offset="0%" stop-color="#1A1A2E"/>
+      <stop offset="50%" stop-color="#16213E"/>
+      <stop offset="100%" stop-color="#1A1A2E"/>
     </linearGradient>
     <linearGradient id="h-textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#FF8C00"/>
-      <stop offset="100%" style="stop-color:#FFB347"/>
+      <stop offset="0%" stop-color="#FF8C00"/>
+      <stop offset="100%" stop-color="#FFB347"/>
     </linearGradient>
   </defs>
 
@@ -89,35 +89,49 @@
   </g>
 
   <!-- ===== TEXT (right side) ===== -->
+  <!-- All text rendered as foreignObject for GitHub SVG compatibility -->
 
-  <!-- Title -->
-  <text x="480" y="155" font-family="'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="72" font-weight="700" fill="url(#h-textGrad)">SnapForge</text>
+  <foreignObject x="470" y="95" width="700" height="80">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:sans-serif;font-size:72px;font-weight:700;color:#FF8C00;line-height:1;">SnapForge</div>
+  </foreignObject>
 
-  <!-- Tagline -->
-  <text x="480" y="205" font-family="'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#CCCCCC" font-weight="300">The open-source Sonos alternative</text>
+  <foreignObject x="470" y="180" width="700" height="35">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:sans-serif;font-size:26px;font-weight:300;color:#CCCCCC;line-height:1;">The open-source Sonos alternative</div>
+  </foreignObject>
 
-  <!-- Subtitle -->
-  <text x="480" y="245" font-family="'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="18" fill="#888888">Multiroom audio for Raspberry Pi. Docker-native. Zero config.</text>
+  <foreignObject x="470" y="222" width="700" height="30">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:sans-serif;font-size:18px;color:#888888;line-height:1;">Multiroom audio for Raspberry Pi. Docker-native. Zero config.</div>
+  </foreignObject>
 
   <!-- Component pills -->
-  <g font-family="'SF Mono', 'Fira Code', 'Consolas', monospace" font-size="13">
+  <g>
     <!-- snapMULTI -->
     <rect x="480" y="275" width="120" height="30" rx="15" fill="#FF8C00" fill-opacity="0.15" stroke="#FF8C00" stroke-width="1" stroke-opacity="0.4"/>
-    <text x="505" y="295" fill="#FFB347">snapMULTI</text>
+    <foreignObject x="480" y="275" width="120" height="30">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:monospace;font-size:13px;color:#FFB347;text-align:center;line-height:30px;">snapMULTI</div>
+    </foreignObject>
 
     <!-- rpi-snapclient -->
     <rect x="615" y="275" width="135" height="30" rx="15" fill="#FF8C00" fill-opacity="0.15" stroke="#FF8C00" stroke-width="1" stroke-opacity="0.4"/>
-    <text x="635" y="295" fill="#FFB347">rpi-snapclient</text>
+    <foreignObject x="615" y="275" width="135" height="30">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:monospace;font-size:13px;color:#FFB347;text-align:center;line-height:30px;">rpi-snapclient</div>
+    </foreignObject>
 
     <!-- SnapCTRL -->
     <rect x="765" y="275" width="105" height="30" rx="15" fill="#FF8C00" fill-opacity="0.15" stroke="#FF8C00" stroke-width="1" stroke-opacity="0.4"/>
-    <text x="790" y="295" fill="#FFB347">SnapCTRL</text>
+    <foreignObject x="765" y="275" width="105" height="30">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:monospace;font-size:13px;color:#FFB347;text-align:center;line-height:30px;">SnapCTRL</div>
+    </foreignObject>
 
     <!-- santcasp -->
     <rect x="885" y="275" width="100" height="30" rx="15" fill="#FF8C00" fill-opacity="0.15" stroke="#FF8C00" stroke-width="1" stroke-opacity="0.4"/>
-    <text x="907" y="295" fill="#FFB347">santcasp</text>
+    <foreignObject x="885" y="275" width="100" height="30">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:monospace;font-size:13px;color:#FFB347;text-align:center;line-height:30px;">santcasp</div>
+    </foreignObject>
   </g>
 
   <!-- Bottom tagline -->
-  <text x="480" y="345" font-family="'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#555555">docker compose up &bull; mDNS autodiscovery &bull; 11 DAC HATs &bull; desktop controller</text>
+  <foreignObject x="470" y="330" width="700" height="25">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:sans-serif;font-size:14px;color:#555555;line-height:1;">docker compose up · mDNS autodiscovery · 11 DAC HATs · desktop controller</div>
+  </foreignObject>
 </svg>
