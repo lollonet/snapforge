@@ -12,7 +12,7 @@ SnapForge consists of three main components that work together to provide synchr
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              AUDIO SOURCES                                   │
+│                              AUDIO SOURCES                                  │
 ├─────────────────┬─────────────────┬─────────────────┬───────────────────────┤
 │ Local Library   │ AirPlay         │ TCP Stream      │ (Future: Spotify)     │
 │ (MPD)           │ (iOS/macOS)     │ (any app)       │                       │
@@ -20,7 +20,7 @@ SnapForge consists of three main components that work together to provide synchr
          │                 │                 │
          ▼                 ▼                 ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         snapMULTI (Server)                                   │
+│                         snapMULTI (Server)                                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
 │  │     MPD     │  │ Shairport   │  │ TCP Server  │  │    Snapserver       │ │
 │  │  Port 6600  │  │   Sync      │  │  Port 4953  │  │  Ports 1704/1780    │ │
@@ -28,11 +28,11 @@ SnapForge consists of three main components that work together to provide synchr
 │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  │  - Stream mgmt      │ │
 │         │                │                │         │  - Client registry  │ │
 │         ▼                ▼                ▼         │  - Group control    │ │
-│  ┌─────────────────────────────────────────────┐   │  - JSON-RPC API     │ │
+│  ┌─────────────────────────────────────────────┐   │  - JSON-RPC API      │ │
 │  │              FIFO / Named Pipes              │───│                     │ │
 │  │           /audio/snapcast_fifo               │   └─────────────────────┘ │
 │  └─────────────────────────────────────────────┘                            │
-│                                                                              │
+│                                                                             │
 │  Network: host mode │ mDNS via Avahi │ Docker containers                    │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
