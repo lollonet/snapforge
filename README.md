@@ -1,24 +1,29 @@
-# SnapForge
+<p align="center">
+  <img src="branding/hero.svg" alt="SnapForge — The open-source Sonos alternative" width="100%">
+</p>
 
-> Open-source multiroom audio ecosystem for home and professional use.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="https://github.com/users/lollonet/projects/3"><img src="https://img.shields.io/badge/project-board-orange.svg" alt="Project Board"></a>
+  <a href="docs/QUICKSTART.md"><img src="https://img.shields.io/badge/start-in%205%20min-brightgreen.svg" alt="Quickstart"></a>
+</p>
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <em>English | <a href="README.it.md">Italiano</a></em>
+</p>
 
-🌍 *English | [Italiano](README.it.md)*
+---
 
-## What is SnapForge?
-
-SnapForge is a complete ecosystem for building synchronized multiroom audio systems. Stream music from your library, AirPlay devices, or any audio source to multiple rooms with perfect synchronization.
-
-**Built on [Snapcast](https://github.com/badaix/snapcast)**, SnapForge provides production-ready components for server, clients, and control interfaces.
+> **The open-source Sonos alternative.** Stream music from your library, AirPlay, or any source to every room in perfect sync. Runs on Raspberry Pi hardware you already own.
 
 ## The Ecosystem
 
-| Component | Description | Repository |
+| Component | What it does | Repository |
 |-----------|-------------|------------|
-| **snapMULTI** | Server with MPD, AirPlay & TCP input | [snapMULTI](https://github.com/lollonet/snapMULTI) |
-| **rpi-snapclient-usb** | Raspberry Pi client with 11 audio HATs support | [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) |
-| **SnapCTRL** | Cross-platform desktop controller (Qt6) | [snapctrl](https://github.com/lollonet/snapctrl) |
+| **snapMULTI** | Server — MPD, AirPlay & TCP audio sources in Docker | [snapMULTI](https://github.com/lollonet/snapMULTI) |
+| **rpi-snapclient-usb** | Client — turns a Raspberry Pi into a room speaker (11 DAC HATs) | [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) |
+| **SnapCTRL** | Controller — desktop app for volume, groups, now playing (Qt6) | [snapctrl](https://github.com/lollonet/snapctrl) |
+| **santcasp** | Engine — SnapForge-maintained fork of Snapcast | [santcasp](https://github.com/lollonet/santcasp) |
 
 ## Architecture
 
@@ -73,33 +78,24 @@ SnapForge is a complete ecosystem for building synchronized multiroom audio syst
 
 ## Quick Start
 
-### 1. Deploy the Server
+**[Full 5-minute quickstart guide](docs/QUICKSTART.md)** — from zero to music in every room.
 
 ```bash
-git clone https://github.com/lollonet/snapMULTI.git
-cd snapMULTI
-cp .env.example .env
-# Edit .env with your music library paths
-docker compose up -d
+# 1. Server (any Linux machine)
+git clone https://github.com/lollonet/snapMULTI.git && cd snapMULTI
+cp .env.example .env          # edit paths to your music
+docker compose up -d           # server is live
+
+# 2. Client (each Raspberry Pi)
+git clone https://github.com/lollonet/rpi-snapclient-usb.git && cd rpi-snapclient-usb
+./scripts/setup.sh             # pick your DAC, set room name, done
+
+# 3. Controller (your laptop)
+git clone https://github.com/lollonet/snapctrl.git && cd snapctrl
+uv pip install -e . && python -m snapctrl
 ```
 
-### 2. Set Up a Client (Raspberry Pi)
-
-```bash
-git clone https://github.com/lollonet/rpi-snapclient-usb.git
-cd rpi-snapclient-usb
-./scripts/setup.sh
-# Follow prompts to select your audio HAT
-```
-
-### 3. Install the Controller
-
-```bash
-git clone https://github.com/lollonet/snapctrl.git
-cd snapctrl
-uv pip install -e .
-python -m snapctrl
-```
+Clients find the server automatically via mDNS. No IP addresses to configure.
 
 ## Documentation
 
@@ -107,8 +103,9 @@ python -m snapctrl
 
 | Document | Description |
 |----------|-------------|
+| **[5-Minute Quickstart](docs/QUICKSTART.md)** | **Get running fast — start here** |
 | [Architecture](docs/ARCHITECTURE.md) | System design and component interaction |
-| [Deployment Guide](docs/DEPLOYMENT-GUIDE.md) | Step-by-step setup instructions |
+| [Deployment Guide](docs/DEPLOYMENT-GUIDE.md) | Full setup with verification and troubleshooting |
 | [Hardware BOM](docs/HARDWARE-BOM.md) | Recommended hardware and costs |
 
 ### Italiano
@@ -156,11 +153,12 @@ Build audiophile-grade multiroom for a fraction of commercial solutions (Sonos, 
 
 Each component has its own repository with contribution guidelines. Start with the component you want to improve:
 
-- [snapMULTI issues](https://github.com/lollonet/snapMULTI/issues)
-- [rpi-snapclient-usb issues](https://github.com/lollonet/rpi-snapclient-usb/issues)
-- [snapctrl issues](https://github.com/lollonet/snapctrl/issues)
+- [snapMULTI issues](https://github.com/lollonet/snapMULTI/issues) — server and audio sources
+- [rpi-snapclient-usb issues](https://github.com/lollonet/rpi-snapclient-usb/issues) — Raspberry Pi clients
+- [snapctrl issues](https://github.com/lollonet/snapctrl/issues) — desktop controller
+- [santcasp issues](https://github.com/lollonet/santcasp/issues) — Snapcast engine fork
 
-For ecosystem-wide discussions, open an issue in this repository.
+For ecosystem-wide discussions, open an issue in this repository or visit the [project board](https://github.com/users/lollonet/projects/3).
 
 ## License
 

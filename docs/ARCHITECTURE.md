@@ -76,6 +76,62 @@ SnapForge consists of three main components that work together to provide synchr
                     └─────────────────────────────────────┘
 ```
 
+## Component Comparison
+
+Hardware, platform and capability matrix for all SnapForge components.
+
+### Platform & Installation
+
+| | **snapMULTI** (server) | **rpi-snapclient** (client) | **SnapCTRL** (controller) | **santcasp** (engine) |
+|---|---|---|---|---|
+| **Role** | Audio hub + sources | Room speaker endpoint | Remote control GUI | Core Snapcast binaries |
+| **Platform** | Any Linux (x86_64, ARM64) | Raspberry Pi (ARM64) | macOS, Linux, Windows | Linux, macOS, Windows, Android |
+| **Install method** | Docker Compose | Docker + setup script | pip / uv / .app bundle | Build from source (CMake) |
+| **Runs headless** | Yes | Yes | No | Yes |
+| **Runs in Docker** | Yes | Yes | No | No |
+
+### Hardware Requirements
+
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** |
+|---|---|---|---|---|
+| **Min CPU** | 2 cores | 1 core | Any modern | Any |
+| **Min RAM** | 1 GB | 512 MB | 256 MB | 64 MB |
+| **Rec RAM** | 2 GB | 1 GB | — | — |
+| **Min storage** | 1 GB + music library | 8 GB SD card | 200 MB | 50 MB |
+| **Typical hardware** | RPi 4 4GB, NUC, NAS, old laptop | RPi 3B/4/5 + audio HAT | Any laptop/desktop | Embedded in other components |
+| **Physical size** | Credit card (RPi) to mini-ITX | 85 x 56 mm (RPi) + HAT | — | — |
+| **Power consumption** | 5–15 W (RPi) / 10–65 W (PC) | 3–7 W (RPi + HAT) | — (runs on laptop) | — |
+| **Price per unit** | €50–150 (RPi) / €0 (reuse PC) | €35–80 (RPi + HAT + case + PSU) | Free | Free |
+
+### Audio Capabilities
+
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** |
+|---|---|---|---|---|
+| **Audio output** | None (distributes to clients) | I2S HATs, USB DAC, HDMI, 3.5mm | None (control only) | ALSA, PulseAudio, PipeWire |
+| **Supported DACs** | — | 11 models: HiFiBerry DAC/Digi+, IQaudio DAC/DigiAMP+, Allo Boss/Piano/DigiOne, JustBoom DAC/Digi/Amp, USB | — | System audio |
+| **Audio quality** | 48 kHz / 16-bit FLAC stream | Up to 192 kHz / 24-bit (HAT dependent) | — | Codec dependent |
+| **Audio sources** | MPD, AirPlay, TCP pipe | Receives stream only | — | Any PCM / pipe / TCP |
+| **Display** | Headless | Optional: album art (800x480 to 4K), CAVA visualizer | Desktop GUI (volume, groups, now playing) | — |
+
+### Network
+
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** |
+|---|---|---|---|---|
+| **Network** | Gigabit recommended, host mode | WiFi or Ethernet | Any | Any |
+| **Ports (listen)** | 1704, 1780, 6600, 4953, 5353 | 5353 (mDNS) | None (outbound only) | 1704, 1780 |
+| **Discovery** | Publishes `_snapcast._tcp` | Discovers server via mDNS | Discovers server via mDNS | mDNS optional |
+| **Bandwidth** | ~1.5 Mbps per client (FLAC) | ~1.5 Mbps inbound | Negligible | ~1.5 Mbps per client |
+
+### Dependencies
+
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** |
+|---|---|---|---|---|
+| **Runtime** | Docker, Avahi | Docker, ALSA | Python 3.11+, PySide6, Qt6 | — |
+| **Build** | — (pre-built images) | — (pre-built images) | pip / uv | CMake, C++17 compiler |
+| **CI/CD** | GitHub Actions (self-hosted ARM64) | GitHub Actions (self-hosted ARM64) | GitHub Actions | Manual builds |
+
+> **Note**: santcasp provides the core `snapserver` and `snapclient` binaries that snapMULTI and rpi-snapclient wrap in their Docker images. SnapCTRL is the only component that doesn't touch audio — it is purely a remote control over JSON-RPC.
+
 ## Component Details
 
 ### snapMULTI (Server)

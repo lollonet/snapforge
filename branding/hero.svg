@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400">
+  <defs>
+    <radialGradient id="h-centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFB347"/>
+      <stop offset="100%" style="stop-color:#FF8C00"/>
+    </radialGradient>
+    <radialGradient id="h-nodeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFCC80"/>
+      <stop offset="100%" style="stop-color:#FF9800"/>
+    </radialGradient>
+    <linearGradient id="h-bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A1A2E"/>
+      <stop offset="50%" style="stop-color:#16213E"/>
+      <stop offset="100%" style="stop-color:#1A1A2E"/>
+    </linearGradient>
+    <linearGradient id="h-textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF8C00"/>
+      <stop offset="100%" style="stop-color:#FFB347"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#h-bgGrad)" rx="16"/>
+
+  <!-- Subtle grid pattern -->
+  <g stroke="#FF8C00" stroke-opacity="0.04" stroke-width="1">
+    <line x1="0" y1="50" x2="1200" y2="50"/>
+    <line x1="0" y1="100" x2="1200" y2="100"/>
+    <line x1="0" y1="150" x2="1200" y2="150"/>
+    <line x1="0" y1="200" x2="1200" y2="200"/>
+    <line x1="0" y1="250" x2="1200" y2="250"/>
+    <line x1="0" y1="300" x2="1200" y2="300"/>
+    <line x1="0" y1="350" x2="1200" y2="350"/>
+    <line x1="100" y1="0" x2="100" y2="400"/>
+    <line x1="200" y1="0" x2="200" y2="400"/>
+    <line x1="300" y1="0" x2="300" y2="400"/>
+    <line x1="400" y1="0" x2="400" y2="400"/>
+    <line x1="500" y1="0" x2="500" y2="400"/>
+    <line x1="600" y1="0" x2="600" y2="400"/>
+    <line x1="700" y1="0" x2="700" y2="400"/>
+    <line x1="800" y1="0" x2="800" y2="400"/>
+    <line x1="900" y1="0" x2="900" y2="400"/>
+    <line x1="1000" y1="0" x2="1000" y2="400"/>
+    <line x1="1100" y1="0" x2="1100" y2="400"/>
+  </g>
+
+  <!-- ===== LOGO (left side) ===== -->
+  <g transform="translate(120, 80) scale(1.85)">
+    <!-- Background circle -->
+    <circle cx="64" cy="64" r="60" fill="#1A1A1A" stroke="#FF8C00" stroke-width="1.5" stroke-opacity="0.4"/>
+
+    <!-- Connection lines -->
+    <g stroke="#FF8C00" stroke-width="2" stroke-opacity="0.5" stroke-linecap="round">
+      <line x1="64" y1="64" x2="64" y2="20"/>
+      <line x1="64" y1="64" x2="64" y2="108"/>
+      <line x1="64" y1="64" x2="20" y2="64"/>
+      <line x1="64" y1="64" x2="108" y2="64"/>
+      <line x1="64" y1="64" x2="33" y2="33"/>
+      <line x1="64" y1="64" x2="95" y2="33"/>
+      <line x1="64" y1="64" x2="33" y2="95"/>
+      <line x1="64" y1="64" x2="95" y2="95"/>
+    </g>
+
+    <!-- Sound waves -->
+    <g fill="none" stroke="#FFCC80" stroke-width="1.2" stroke-opacity="0.3">
+      <circle cx="64" cy="64" r="25"/>
+      <circle cx="64" cy="64" r="35"/>
+      <circle cx="64" cy="64" r="45"/>
+    </g>
+
+    <!-- Outer nodes -->
+    <g fill="url(#h-nodeGlow)">
+      <circle cx="64" cy="20" r="7"/>
+      <circle cx="64" cy="108" r="7"/>
+      <circle cx="20" cy="64" r="7"/>
+      <circle cx="108" cy="64" r="7"/>
+      <circle cx="33" cy="33" r="6"/>
+      <circle cx="95" cy="33" r="6"/>
+      <circle cx="33" cy="95" r="6"/>
+      <circle cx="95" cy="95" r="6"/>
+    </g>
+
+    <!-- Center hub -->
+    <circle cx="64" cy="64" r="13" fill="url(#h-centerGlow)" stroke="#FFE0B2" stroke-width="1.5"/>
+    <g fill="#1A1A1A">
+      <rect x="58" y="58" width="6" height="12" rx="1"/>
+      <path d="M64 58 L72 52 L72 76 L64 70 Z"/>
+    </g>
+  </g>
+
+  <!-- ===== TEXT (right side) ===== -->
+
+  <!-- Title -->
+  <text x="480" y="155" font-family="'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="72" font-weight="700" fill="url(#h-textGrad)">SnapForge</text>
+
+  <!-- Tagline -->
+  <text x="480" y="205" font-family="'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#CCCCCC" font-weight="300">The open-source Sonos alternative</text>
+
+  <!-- Subtitle -->
+  <text x="480" y="245" font-family="'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="18" fill="#888888">Multiroom audio for Raspberry Pi. Docker-native. Zero config.</text>
+
+  <!-- Component pills -->
+  <g font-family="'SF Mono', 'Fira Code', 'Consolas', monospace" font-size="13">
+    <!-- snapMULTI -->
+    <rect x="480" y="275" width="120" height="30" rx="15" fill="#FF8C00" fill-opacity="0.15" stroke="#FF8C00" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="505" y="295" fill="#FFB347">snapMULTI</text>
+
+    <!-- rpi-snapclient -->
+    <rect x="615" y="275" width="135" height="30" rx="15" fill="#FF8C00" fill-opacity="0.15" stroke="#FF8C00" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="635" y="295" fill="#FFB347">rpi-snapclient</text>
+
+    <!-- SnapCTRL -->
+    <rect x="765" y="275" width="105" height="30" rx="15" fill="#FF8C00" fill-opacity="0.15" stroke="#FF8C00" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="790" y="295" fill="#FFB347">SnapCTRL</text>
+
+    <!-- santcasp -->
+    <rect x="885" y="275" width="100" height="30" rx="15" fill="#FF8C00" fill-opacity="0.15" stroke="#FF8C00" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="907" y="295" fill="#FFB347">santcasp</text>
+  </g>
+
+  <!-- Bottom tagline -->
+  <text x="480" y="345" font-family="'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#555555">docker compose up &bull; mDNS autodiscovery &bull; 11 DAC HATs &bull; desktop controller</text>
+</svg>
