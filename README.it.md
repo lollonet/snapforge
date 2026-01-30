@@ -1,24 +1,29 @@
-# SnapForge
+<p align="center">
+  <img src="branding/hero.svg" alt="SnapForge — L'alternativa open-source a Sonos" width="100%">
+</p>
 
-> Ecosistema audio multiroom open-source per uso domestico e professionale.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licenza-MIT-blue.svg" alt="Licenza"></a>
+  <a href="https://github.com/users/lollonet/projects/3"><img src="https://img.shields.io/badge/project-board-orange.svg" alt="Project Board"></a>
+  <a href="docs/QUICKSTART.md"><img src="https://img.shields.io/badge/parti-in%205%20min-brightgreen.svg" alt="Quickstart"></a>
+</p>
 
-[![Licenza](https://img.shields.io/badge/licenza-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <em><a href="README.md">English</a> | Italiano</em>
+</p>
 
-🌍 *[English](README.md) | Italiano*
+---
 
-## Cos'è SnapForge?
-
-SnapForge è un ecosistema completo per costruire sistemi audio multiroom sincronizzati. Streaming della musica dalla tua libreria, dispositivi AirPlay o qualsiasi sorgente audio verso più stanze con sincronizzazione perfetta.
-
-**Basato su [Snapcast](https://github.com/badaix/snapcast)**, SnapForge fornisce componenti pronti per la produzione per server, client e interfacce di controllo.
+> **L'alternativa open-source a Sonos.** Streaming della musica dalla tua libreria, AirPlay o qualsiasi sorgente verso ogni stanza in perfetto sync. Gira su hardware Raspberry Pi che gia' possiedi.
 
 ## L'Ecosistema
 
-| Componente | Descrizione | Repository |
-|------------|-------------|------------|
-| **snapMULTI** | Server con MPD, AirPlay e input TCP | [snapMULTI](https://github.com/lollonet/snapMULTI) |
-| **rpi-snapclient-usb** | Client Raspberry Pi con supporto 11 HAT audio | [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) |
-| **SnapCTRL** | Controller desktop cross-platform (Qt6) | [snapctrl](https://github.com/lollonet/snapctrl) |
+| Componente | Cosa fa | Repository |
+|------------|---------|------------|
+| **snapMULTI** | Server — sorgenti audio MPD, AirPlay e TCP in Docker | [snapMULTI](https://github.com/lollonet/snapMULTI) |
+| **rpi-snapclient-usb** | Client — trasforma un Raspberry Pi in un altoparlante (11 DAC HAT) | [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) |
+| **SnapCTRL** | Controller — app desktop per volume, gruppi, in riproduzione (Qt6) | [snapctrl](https://github.com/lollonet/snapctrl) |
+| **santcasp** | Engine — fork di Snapcast mantenuto da SnapForge | [santcasp](https://github.com/lollonet/santcasp) |
 
 ## Architettura
 
@@ -51,7 +56,7 @@ SnapForge è un ecosistema completo per costruire sistemi audio multiroom sincro
                     └─────────────────────────────────────────┘
 ```
 
-## Funzionalità
+## Funzionalita'
 
 ### Server (snapMULTI)
 - Tre sorgenti audio: MPD (libreria locale), AirPlay, input TCP
@@ -73,35 +78,28 @@ SnapForge è un ecosistema completo per costruire sistemi audio multiroom sincro
 
 ## Quick Start
 
-### 1. Deploy del Server
+**[Guida quickstart completa (5 minuti)](docs/QUICKSTART.md)** — da zero a musica in ogni stanza.
 
 ```bash
-git clone https://github.com/lollonet/snapMULTI.git
-cd snapMULTI
-cp .env.example .env
-# Modifica .env con i percorsi della tua libreria musicale
-docker compose up -d
+# 1. Server (qualsiasi macchina Linux)
+git clone https://github.com/lollonet/snapMULTI.git && cd snapMULTI
+cp .env.example .env          # modifica i percorsi della tua musica
+docker compose up -d           # server attivo
+
+# 2. Client (ogni Raspberry Pi)
+git clone https://github.com/lollonet/rpi-snapclient-usb.git && cd rpi-snapclient-usb
+./scripts/setup.sh             # scegli il DAC, imposta il nome stanza, fatto
+
+# 3. Controller (il tuo laptop)
+git clone https://github.com/lollonet/snapctrl.git && cd snapctrl
+uv pip install -e . && python -m snapctrl
 ```
 
-### 2. Setup di un Client (Raspberry Pi)
-
-```bash
-git clone https://github.com/lollonet/rpi-snapclient-usb.git
-cd rpi-snapclient-usb
-./scripts/setup.sh
-# Segui i prompt per selezionare il tuo HAT audio
-```
-
-### 3. Installa il Controller
-
-```bash
-git clone https://github.com/lollonet/snapctrl.git
-cd snapctrl
-uv pip install -e .
-python -m snapctrl
-```
+I client trovano il server automaticamente via mDNS. Nessun indirizzo IP da configurare.
 
 ## Documentazione
+
+### Italiano
 
 | Documento | Descrizione |
 |-----------|-------------|
@@ -109,24 +107,33 @@ python -m snapctrl
 | [Guida al Deployment](docs/it/DEPLOYMENT-GUIDE.md) | Istruzioni di setup passo-passo |
 | [BOM Hardware](docs/it/HARDWARE-BOM.md) | Hardware consigliato e costi |
 
+### English
+
+| Document | Description |
+|----------|-------------|
+| **[5-Minute Quickstart](docs/QUICKSTART.md)** | **Get running fast — start here** |
+| [Architecture](docs/ARCHITECTURE.md) | System design and component interaction |
+| [Deployment Guide](docs/DEPLOYMENT-GUIDE.md) | Full setup with verification and troubleshooting |
+| [Hardware BOM](docs/HARDWARE-BOM.md) | Recommended hardware and costs |
+
 ## Casi d'Uso
 
 ### Audio Domestico
 Streaming della tua libreria musicale in ogni stanza. Controlla tutto dal telefono (app MPD) o desktop (SnapCTRL).
 
-### Modalità Festa
-Una sorgente, sync perfetto su tutti i diffusori. Niente più eco da una stanza all'altra.
+### Modalita' Festa
+Una sorgente, sync perfetto su tutti i diffusori. Niente piu' eco da una stanza all'altra.
 
 ### Musica di Sottofondo per Business
-Ristoranti, uffici, negozi - audio sincronizzato con controllo per zone.
+Ristoranti, uffici, negozi — audio sincronizzato con controllo per zone.
 
 ### Hi-Fi DIY
 Costruisci un multiroom di grado audiofilo a una frazione delle soluzioni commerciali (Sonos, HEOS, BluOS).
 
 ## Confronto
 
-| Funzionalità | SnapForge | Sonos | Chromecast Audio | AirPlay 2 |
-|--------------|-----------|-------|------------------|-----------|
+| Funzionalita' | SnapForge | Sonos | Chromecast Audio | AirPlay 2 |
+|---------------|-----------|-------|------------------|-----------|
 | Open Source | ✅ | ❌ | ❌ | ❌ |
 | Self-hosted | ✅ | ❌ | ❌ | ❌ |
 | Hardware agnostico | ✅ | ❌ | ❌ | ❌ |
@@ -146,15 +153,16 @@ Costruisci un multiroom di grado audiofilo a una frazione delle soluzioni commer
 
 Ogni componente ha il proprio repository con linee guida per i contributi. Inizia con il componente che vuoi migliorare:
 
-- [Issue snapMULTI](https://github.com/lollonet/snapMULTI/issues)
-- [Issue rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb/issues)
-- [Issue snapctrl](https://github.com/lollonet/snapctrl/issues)
+- [Issue snapMULTI](https://github.com/lollonet/snapMULTI/issues) — server e sorgenti audio
+- [Issue rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb/issues) — client Raspberry Pi
+- [Issue snapctrl](https://github.com/lollonet/snapctrl/issues) — controller desktop
+- [Issue santcasp](https://github.com/lollonet/santcasp/issues) — fork del motore Snapcast
 
-Per discussioni sull'intero ecosistema, apri una issue in questo repository.
+Per discussioni sull'intero ecosistema, apri una issue in questo repository o visita il [project board](https://github.com/users/lollonet/projects/3).
 
 ## Licenza
 
-Licenza MIT - vedi [LICENSE](LICENSE) per i dettagli.
+Licenza MIT — vedi [LICENSE](LICENSE) per i dettagli.
 
 Tutti i componenti di SnapForge sono rilasciati sotto Licenza MIT.
 
