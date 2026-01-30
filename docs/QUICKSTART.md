@@ -5,6 +5,20 @@
 This guide gets you a working multiroom audio system as fast as possible.
 For detailed configuration, see the [Deployment Guide](DEPLOYMENT-GUIDE.md).
 
+## Choose your setup
+
+| Setup | Hardware | What you get |
+|-------|----------|-------------|
+| **Minimal** | 1 Pi 4 + audio HAT | Server + client on the same device. One room, zero extras. |
+| **Standard** | Pi 4 + Pi per room + laptop | Dedicated server, one speaker per room, desktop controller. |
+| **Power user** | NUC + Pi clients + PC | Always-on NUC server, Pi endpoints everywhere, full SnapCTRL on your laptop. |
+
+Not sure? Start with **Minimal** — you can add rooms later without reconfiguring anything.
+
+For the full platform support matrix, see [Architecture — Deployment Topologies](ARCHITECTURE.md#deployment-topologies).
+
+---
+
 ## What you'll need
 
 | Role | Hardware | You'll install |

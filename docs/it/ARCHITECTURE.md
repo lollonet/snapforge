@@ -132,6 +132,154 @@ Matrice hardware, piattaforma e funzionalita' per tutti i componenti SnapForge.
 
 > **Nota**: santcasp fornisce i binari core `snapserver` e `snapclient` che snapMULTI e rpi-snapclient includono nelle loro immagini Docker. SnapCTRL e' l'unico componente che non tocca l'audio — e' puramente un controllo remoto via JSON-RPC.
 
+## Topologie di Deployment
+
+Quali componenti girano su quale hardware e come combinarli.
+
+### Matrice di Supporto Piattaforme
+
+#### Componenti vs Hardware
+
+| | **PC** | **NUC** | **ARM 7v (Pi Zero)** | **ARM 64v (Pi 3/4/5)** |
+|---|:---:|:---:|:---:|:---:|
+| **Server** | X | X | — | X |
+| **Client** | X | X | X | X |
+| **CTRL** | X | — | — | — |
+| **Sorgente MPD** | X | X | N/A | X |
+| **Stream** | N/A | N/A | N/A | N/A |
+
+- **CTRL** richiede una GUI desktop (PySide6/Qt6) — disponibile solo su PC (laptop/desktop).
+- **Pi Zero** (ARM 7v): solo client. CPU/RAM insufficienti per server o MPD.
+- **MPD** non applicabile su Pi Zero — troppo debole per indicizzazione e decodifica musicale.
+- **Stream** e' N/A ovunque — lo streaming TCP e' una funzionalita' del server, non un pacchetto installabile separato.
+
+#### Hardware vs Pacchetti Installabili
+
+| | **SRV** | **CLIENT** | **CTRL** | **MPD** |
+|---|:---:|:---:|:---:|:---:|
+| **PC** | X | X | X | X |
+| **NUC** | X | X | — | X |
+| **Pi Zero** | — | X | — | X |
+| **Pi 3/4/5** | X | X | — | X |
+
+### Profili Hardware
+
+| Hardware | Descrizione | Ruolo ideale |
+|----------|-------------|--------------|
+| **PC** (laptop/desktop) | Completo. Puo' far girare tutto incluso CTRL. | All-in-one, test, o stazione di controllo |
+| **NUC** (mini-PC Intel) | Mini-PC headless. Potente, fanless, sempre acceso. | Server dedicato (SRV + MPD) |
+| **Pi Zero / ARM 7v** | Single-core, 512 MB RAM, <1 W a riposo. | Endpoint piu' economico (solo client) |
+| **Pi 3/4/5 / ARM 64v** | Quad-core, 1–8 GB RAM. Il Pi 4 da 4 GB e' il punto ottimale. | Versatile: server o client |
+
+### Scenari di Deployment
+
+#### 1. All-in-one su PC (sviluppo/test)
+
+Tutto su una macchina. Ideale per provare SnapForge senza hardware Pi.
+
+```
+┌──────────────────────────────────────────┐
+│              PC / Laptop                 │
+│                                          │
+│  snapMULTI (SRV + MPD)                  │
+│  snapclient (altoparlante locale)       │
+│  SnapCTRL (GUI)                         │
+└──────────────────────────────────────────┘
+```
+
+#### 2. Pi 4 server dedicato + Pi client (il piu' comune)
+
+Il setup casalingo consigliato. Un Pi 4 come server, un Pi per stanza.
+
+```
+┌───────────────────┐     ┌─────────────────┐
+│   Pi 4 (server)   │────▶│ Pi 3B (camera)  │
+│   SRV + MPD       │     │ CLIENT          │
+└───────────────────┘     └─────────────────┘
+         │
+         ├────────────────▶┌─────────────────┐
+         │                 │ Pi 4 (cucina)   │
+         │                 │ CLIENT          │
+         │                 └─────────────────┘
+         │
+         └────────────────▶┌─────────────────┐
+                           │ Pi Zero (bagno) │
+                           │ CLIENT          │
+                           └─────────────────┘
+```
+
+#### 3. NUC server + Pi client + PC controller (power user)
+
+NUC sempre acceso come server dedicato, Pi per ogni stanza, desktop come controller.
+
+```
+┌───────────────────┐     ┌─────────────────┐
+│   NUC (server)    │────▶│ Pi client       │
+│   SRV + MPD       │     │ (uno per stanza)│
+└───────────────────┘     └─────────────────┘
+         ▲
+         │ JSON-RPC
+┌───────────────────┐
+│   PC (laptop)     │
+│   SnapCTRL        │
+└───────────────────┘
+```
+
+#### 4. Pi 4 server + Pi Zero client (multiroom economico)
+
+Costo minimo per stanza (~€15 per Pi Zero W + DAC USB).
+
+```
+┌───────────────────┐     ┌───────────────────┐
+│   Pi 4 (server)   │────▶│ Pi Zero W (sala1) │
+│   SRV + MPD       │     │ CLIENT + DAC USB  │
+└───────────────────┘     └───────────────────┘
+         │
+         └────────────────▶┌───────────────────┐
+                           │ Pi Zero W (sala2) │
+                           │ CLIENT + DAC USB  │
+                           └───────────────────┘
+```
+
+#### 5. PC server + client desktop (senza Pi)
+
+Usa il tuo PC come server e punto di ascolto. Nessun Raspberry Pi necessario.
+
+```
+┌──────────────────────────────────────────┐
+│              PC / Laptop                 │
+│                                          │
+│  snapMULTI (SRV + MPD)                  │
+│  snapclient (casse/cuffie)              │
+│  SnapCTRL (GUI)                         │
+└──────────────────────────────────────────┘
+```
+
+### Co-locazione: Server + MPD
+
+Il server (snapserver) e MPD possono girare sulla **stessa macchina** o su **macchine diverse**. Questa scelta influenza latenza e architettura.
+
+| Topologia | Collegamento audio | Latenza | Complessita' | Storage | Ideale per |
+|-----------|-------------------|---------|--------------|---------|------------|
+| **Stesso host** | Pipe FIFO (`/audio/snapcast_fifo`) | ~0 ms | Semplice | Disco locale o mount NFS | La maggior parte dei setup |
+| **Host separati** | Stream TCP/HTTP | +5–20 ms | Maggiore | NAS / storage remoto | Grandi librerie musicali su NAS |
+
+**Perche' e' importante:** MPD scrive l'audio PCM decodificato su una pipe FIFO. Snapserver legge dalla stessa pipe. Questo richiede che entrambi i processi condividano lo stesso filesystem — cioe' la stessa macchina (o almeno lo stesso volume Docker).
+
+Se hai bisogno di MPD su una macchina diversa (es. un NAS con molto spazio), devi passare dalla pipe FIFO a un output TCP o HTTP in MPD, e configurare snapserver per leggere da una sorgente TCP. Questo aggiunge latenza di rete e complessita' di configurazione.
+
+**Default (consigliato):** Tieni server + MPD co-locati. Questa e' la configurazione di snapMULTI pronta all'uso.
+
+### Cosa Puo' Condividere una Macchina
+
+| Combinazione | Funziona? | Note |
+|-------------|:---------:|------|
+| Server + MPD | **Si** (consigliato) | Collegati via pipe FIFO. Devono essere co-locati per audio a latenza zero. |
+| Server + Client | **Si** | La macchina server diventa anche altoparlante. Nessun conflitto di porte. |
+| Client + CTRL | **Si** (solo PC) | Nessun conflitto di porte. Entrambi fanno connessioni in uscita. |
+| Server + Client + MPD | **Si** | Setup all-in-one. Funziona su Pi 4 o PC. |
+| Server + CTRL | **Si** (solo PC) | Controlla il sistema dalla macchina server stessa. |
+
 ## Dettagli dei Componenti
 
 ### snapMULTI (Server)
