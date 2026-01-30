@@ -28,7 +28,7 @@ SnapForge consists of three main components that work together to provide synchr
 │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  │  - Stream mgmt      │ │
 │         │                │                │         │  - Client registry  │ │
 │         ▼                ▼                ▼         │  - Group control    │ │
-│  ┌─────────────────────────────────────────────┐   │  - JSON-RPC API      │ │
+│  ┌─────────────────────────────────────────────┐    │  - JSON-RPC API     │ │
 │  │              FIFO / Named Pipes              │───│                     │ │
 │  │           /audio/snapcast_fifo               │   └─────────────────────┘ │
 │  └─────────────────────────────────────────────┘                            │
