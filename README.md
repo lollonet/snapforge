@@ -182,4 +182,4 @@ The native apps (SnapClient iOS, SnapClient Android, SnapCTRL) are proprietary s
 
 ---
 
-**SnapForge** is part of the [Forge](https://github.com/lollonet) software ecosystem.
+**SnapForge** — self-hosted multiroom audio. [github.com/lollonet/snapforge](https://github.com/lollonet/snapforge)
