@@ -109,9 +109,9 @@ private struct RPCNotification: Decodable {
 
 // MARK: - JSON-RPC Client
 
-/// Client for the Snapcast JSON-RPC control API (port 1780).
+/// Client for the Snapcast JSON-RPC control API (port 1705, TCP).
 ///
-/// Supports both TCP and WebSocket transports.
+/// Connects via raw TCP to the Snapserver control port (1705).
 /// Receives server notifications for real-time state updates.
 @MainActor
 final class SnapcastRPCClient: ObservableObject {
@@ -133,7 +133,7 @@ final class SnapcastRPCClient: ObservableObject {
     // MARK: - Connection
 
     /// Connect to the Snapserver JSON-RPC API.
-    func connect(host: String, port: Int = 1780) {
+    func connect(host: String, port: Int = 1705) {
         disconnect()
 
         let nwHost = NWEndpoint.Host(host)

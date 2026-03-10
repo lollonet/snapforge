@@ -32,7 +32,7 @@ Turns your iPhone or iPad into a synchronized multiroom audio endpoint. Connects
 ## Features
 
 - **Synchronized playback** — sub-millisecond sync with all Snapcast clients
-- **All codecs** — FLAC, PCM, Opus, Vorbis (via C++ core)
+- **All codecs** — FLAC, PCM, Opus, Vorbis (via C++ core, integration in progress)
 - **Server discovery** — automatic via mDNS/Bonjour (zero configuration)
 - **Remote control** — manage all clients, groups, and streams via JSON-RPC
 - **Background audio** — keeps playing when the app is minimized
@@ -112,8 +112,8 @@ snapclient-ios/
 5. **Time sync** messages exchanged periodically to maintain sub-ms sync
 6. **CoreAudio** AudioQueue outputs PCM to the device speaker/headphones
 
-### Control path (port 1780)
-1. **TCP connection** to Snapserver JSON-RPC API on port 1780
+### Control path (port 1705)
+1. **TCP connection** to Snapserver JSON-RPC API on port 1705
 2. **Server.GetStatus** retrieves all groups, clients, and streams
 3. **Client.SetVolume**, **Group.SetMute**, etc. for real-time control
 4. **Notifications** pushed by server for state changes

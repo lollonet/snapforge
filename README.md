@@ -176,7 +176,9 @@ For ecosystem-wide discussions, open an issue in this repository or visit the [p
 
 ## License
 
-The open platform components (snapMULTI, rpi-snapclient-usb, santcasp) are released under the MIT License — see [LICENSE](LICENSE) for details.
+The open platform components (snapMULTI, rpi-snapclient-usb) are released under the MIT License — see [LICENSE](LICENSE) for details.
+
+[santcasp](https://github.com/lollonet/santcasp) is a fork of [Snapcast](https://github.com/badaix/snapcast) and is released under the GPLv3+ License.
 
 The native apps (SnapClient iOS, SnapClient Android, SnapCTRL) are proprietary software with separate commercial licenses.
 
