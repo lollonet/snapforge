@@ -8,14 +8,14 @@ Questo documento descrive l'architettura tecnica dell'ecosistema audio multiroom
 
 ## Panoramica del Sistema
 
-SnapForge è composto da tre componenti principali che lavorano insieme per fornire audio multiroom sincronizzato:
+SnapForge è composto da una piattaforma open e app native che lavorano insieme per fornire audio multiroom sincronizzato:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              SORGENTI AUDIO                                  │
 ├─────────────────┬─────────────────┬─────────────────┬───────────────────────┤
-│ Libreria Locale │ AirPlay         │ Stream TCP      │ (Futuro: Spotify)     │
-│ (MPD)           │ (iOS/macOS)     │ (qualsiasi app) │                       │
+│ Libreria Locale │ AirPlay         │ Stream TCP      │ Spotify (librespot)   │
+│ (MPD)           │ (iOS/macOS)     │ (qualsiasi app) │ Tidal (ARM)           │
 └────────┬────────┴────────┬────────┴────────┬────────┴───────────────────────┘
          │                 │                 │
          ▼                 ▼                 ▼
@@ -56,8 +56,19 @@ SnapForge è composto da tre componenti principali che lavorano insieme per forn
 │ └─────────────┘ │          │ └─────────────┘ │          │ └─────────────┘ │
 └─────────────────┘          └─────────────────┘          └─────────────────┘
 
+              ┌───────────────────────────────────────────────────────┐
+              │       App Native SnapForge (disponibili presto)       │
+              │  ┌──────────────────────┐  ┌───────────────────────┐  │
+              │  │   SnapClient iOS     │  │  SnapClient Android   │  │
+              │  │  Swift · AVAudioEngine│  │  Kotlin · Oboe       │  │
+              │  │  FLAC / Opus / PCM   │  │  FLAC / Opus / PCM   │  │
+              │  │  Porta 1704 (audio)  │  │  Porta 1704 (audio)  │  │
+              │  │  Porta 1705 (ctrl)   │  │  Porta 1705 (ctrl)   │  │
+              │  └──────────────────────┘  └───────────────────────┘  │
+              └───────────────────────────────────────────────────────┘
+
                     ┌─────────────────────────────────────┐
-                    │            SnapCTRL                 │
+                    │    SnapCTRL (disponibile presto)    │
                     │  ┌───────────────────────────────┐  │
                     │  │      GUI PySide6/Qt6          │  │
                     │  │                               │  │
@@ -72,11 +83,11 @@ SnapForge è composto da tre componenti principali che lavorano insieme per forn
                     │  │     └───────┬───────┘         │  │
                     │  │             ▼                 │  │
                     │  │     ┌───────────────┐         │  │
-                    │  │     │  Client TCP   │─────────┼──┼──► Porta 1780
+                    │  │     │  Client TCP   │─────────┼──┼──► Porta 1705
                     │  │     │  JSON-RPC     │         │  │
                     │  │     └───────────────┘         │  │
                     │  └───────────────────────────────┘  │
-                    │  Windows / macOS / Linux            │
+                    │  macOS/Windows (a pagamento) · Linux (gratuito)  │
                     └─────────────────────────────────────┘
 ```
 
@@ -86,55 +97,53 @@ Matrice hardware, piattaforma e funzionalita' per tutti i componenti SnapForge.
 
 ### Piattaforma e Installazione
 
-| | **snapMULTI** (server) | **rpi-snapclient** (client) | **SnapCTRL** (controller) | **santcasp** (engine) |
-|---|---|---|---|---|
-| **Ruolo** | Hub audio + sorgenti | Altoparlante per stanza | Controllo remoto GUI | Binari core di Snapcast |
-| **Piattaforma** | Qualsiasi Linux (x86_64, ARM64) | Raspberry Pi (ARM64) | macOS, Linux, Windows | Linux, macOS, Windows, Android |
-| **Installazione** | Docker Compose | Docker + script setup | pip / uv / .app bundle | Build da sorgente (CMake) |
-| **Funziona headless** | Si | Si | No | Si |
-| **Funziona in Docker** | Si | Si | No | No |
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** | **SnapClient iOS** | **SnapClient Android** |
+|---|---|---|---|---|---|---|
+| **Ruolo** | Hub audio + sorgenti | Altoparlante per stanza | GUI controllo desktop | Binari core Snapcast | Client audio iOS | Client audio Android |
+| **Piattaforma** | Qualsiasi Linux (x86_64, ARM64) | Raspberry Pi (ARM64) | macOS, Linux, Windows | Linux, macOS, Windows | iOS 17+ (iPhone/iPad) | Android (API 26+) |
+| **Installazione** | Docker Compose | Docker + script setup | pip/uv (Linux) · App Store/Microsoft Store | .deb / .tar.gz / .zip | App Store (presto) | Play Store (presto) |
+| **Funziona headless** | Si | Si | No | Si | No | No |
+| **Funziona in Docker** | Si | Si | No | No | No | No |
 
 ### Requisiti Hardware
 
-| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** |
-|---|---|---|---|---|
-| **CPU minima** | 2 core | 1 core | Qualsiasi moderno | Qualsiasi |
-| **RAM minima** | 1 GB | 512 MB | 256 MB | 64 MB |
-| **RAM consigliata** | 2 GB | 1 GB | — | — |
-| **Storage minimo** | 1 GB + libreria musicale | 8 GB scheda SD | 200 MB | 50 MB |
-| **Hardware tipico** | RPi 4 4GB, NUC, NAS, vecchio laptop | RPi 3B/4/5 + scheda audio | Qualsiasi laptop/desktop | Integrato negli altri componenti |
-| **Dimensioni fisiche** | Carta di credito (RPi) a mini-ITX | 85 x 56 mm (RPi) + HAT | — | — |
-| **Consumo** | 5–15 W (RPi) / 10–65 W (PC) | 3–7 W (RPi + HAT) | — (gira su laptop) | — |
-| **Prezzo per unita'** | €50–150 (RPi) / €0 (riuso PC) | €35–80 (RPi + HAT + case + alimentatore) | Gratuito | Gratuito |
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** | **SnapClient iOS** | **SnapClient Android** |
+|---|---|---|---|---|---|---|
+| **CPU minima** | 2 core | 1 core | Qualsiasi moderno | Qualsiasi | Apple A12+ | ARMv7 / ARM64 |
+| **RAM minima** | 1 GB | 512 MB | 256 MB | 64 MB | — (gestita dall'OS) | — (gestita dall'OS) |
+| **RAM consigliata** | 2 GB | 1 GB | — | — | — | — |
+| **Storage minimo** | 1 GB + libreria musicale | 8 GB scheda SD | 200 MB | 50 MB | ~50 MB | ~50 MB |
+| **Hardware tipico** | RPi 4 4GB, NUC, NAS, vecchio laptop | RPi 3B/4/5 + scheda audio | Qualsiasi laptop/desktop | Integrato negli altri componenti | iPhone / iPad (iOS 17+) | Telefono/tablet Android (API 26+) |
+| **Prezzo per unita'** | €50–150 (RPi) / €0 (riuso PC) | €35–80 (RPi + HAT + case + alimentatore) | Gratuito (Linux) · a pagamento (macOS/Windows) | Gratuito | A pagamento (App Store) | A pagamento (Play Store) |
 
 ### Capacita' Audio
 
-| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** |
-|---|---|---|---|---|
-| **Uscita audio** | Nessuna (distribuisce ai client) | HAT I2S, DAC USB, HDMI, jack 3.5mm | Nessuna (solo controllo) | ALSA, PulseAudio, PipeWire |
-| **DAC supportati** | — | 11 modelli: HiFiBerry DAC/Digi+, IQaudio DAC/DigiAMP+, Allo Boss/Piano/DigiOne, JustBoom DAC/Digi/Amp, USB | — | Audio di sistema |
-| **Qualita' audio** | Stream FLAC 48 kHz / 16-bit | Fino a 192 kHz / 24-bit (dipende dal HAT) | — | Dipende dal codec |
-| **Sorgenti audio** | MPD, AirPlay, pipe TCP | Riceve solo lo stream | — | Qualsiasi PCM / pipe / TCP |
-| **Display** | Headless | Opzionale: copertina album (800x480 fino a 4K), visualizzatore CAVA | GUI desktop (volume, gruppi, in riproduzione) | — |
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** | **SnapClient iOS** | **SnapClient Android** |
+|---|---|---|---|---|---|---|
+| **Uscita audio** | Nessuna (distribuisce ai client) | HAT I2S, DAC USB, HDMI, jack 3.5mm | Nessuna (solo controllo) | ALSA, PulseAudio, PipeWire | Altoparlante, cuffie, AirPlay | Altoparlante, cuffie, BT |
+| **Codec** | Stream FLAC (48kHz/16bit) | Dipende dal HAT (fino a 192kHz/24bit) | — | Dipende dal codec | FLAC, Opus, PCM | FLAC, Opus, PCM |
+| **Sorgenti audio** | MPD, AirPlay, Spotify, Tidal, TCP | Riceve solo lo stream | — | Qualsiasi PCM / pipe / TCP | Riceve solo lo stream | Riceve solo lo stream |
+| **Sync** | Distribuisce stream time-synced | <1ms (protocollo Snapcast) | — | <1ms | <1ms (NTP-style) | <1ms (NTP-style, soft sync) |
+| **Display** | Headless | Opzionale: copertine album, analizzatore spettro | GUI desktop (volume, gruppi, copertine) | — | Lock screen, Control Center | In riproduzione, copertine |
 
 ### Rete
 
-| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** |
-|---|---|---|---|---|
-| **Rete** | Gigabit consigliata, modalita' host | WiFi o Ethernet | Qualsiasi | Qualsiasi |
-| **Porte (ascolto)** | 1704, 1780, 6600, 4953, 5353 | 5353 (mDNS) | Nessuna (solo uscita) | 1704, 1780 |
-| **Discovery** | Pubblica `_snapcast._tcp` | Scopre il server via mDNS | Scopre il server via mDNS | mDNS opzionale |
-| **Banda** | ~1.5 Mbps per client (FLAC) | ~1.5 Mbps in ingresso | Trascurabile | ~1.5 Mbps per client |
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** | **SnapClient iOS** | **SnapClient Android** |
+|---|---|---|---|---|---|---|
+| **Rete** | Gigabit consigliata, modalita' host | WiFi o Ethernet | Qualsiasi | Qualsiasi | WiFi / cellulare+VPN | WiFi / cellulare+VPN |
+| **Porte (ascolto)** | 1704, 1705, 1780, 6600, 4953, 5353 | 5353 (mDNS) | Nessuna (solo uscita) | 1704, 1705, 1780 | Nessuna (solo uscita) | Nessuna (solo uscita) |
+| **Discovery** | Pubblica `_snapcast._tcp` | Scopre il server via mDNS | Scopre il server via mDNS | mDNS opzionale | mDNS (NWBrowser / Bonjour) | mDNS (NsdManager) |
+| **Banda** | ~1.5 Mbps per client (FLAC) | ~1.5 Mbps in ingresso | Trascurabile | ~1.5 Mbps per client | ~1.5 Mbps in ingresso | ~1.5 Mbps in ingresso |
 
 ### Dipendenze
 
-| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** |
-|---|---|---|---|---|
-| **Runtime** | Docker, Avahi | Docker, ALSA | Python 3.11+, PySide6, Qt6 | — |
-| **Build** | — (immagini pre-costruite) | — (immagini pre-costruite) | pip / uv | CMake, compilatore C++17 |
-| **CI/CD** | GitHub Actions (runner self-hosted ARM64) | GitHub Actions (runner self-hosted ARM64) | GitHub Actions | Build manuali |
+| | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** | **SnapClient iOS** | **SnapClient Android** |
+|---|---|---|---|---|---|---|
+| **Runtime** | Docker, Avahi | Docker, ALSA | Python 3.11+, PySide6, Qt6 | — | iOS 17+, AVAudioEngine | Android API 26+, Oboe |
+| **Build** | — (immagini pre-costruite) | — (immagini pre-costruite) | pip / uv | CMake, compilatore C++17 | Xcode 17+, autotools | Android Studio, NDK, CMake |
+| **CI/CD** | GitHub Actions (runner self-hosted ARM64) | GitHub Actions (runner self-hosted ARM64) | GitHub Actions | Build manuali | GitHub Actions | GitHub Actions (self-hosted) |
 
-> **Nota**: santcasp fornisce i binari core `snapserver` e `snapclient` che snapMULTI e rpi-snapclient includono nelle loro immagini Docker. SnapCTRL e' l'unico componente che non tocca l'audio — e' puramente un controllo remoto via JSON-RPC.
+> **Nota**: santcasp fornisce i binari core `snapserver` e `snapclient` che snapMULTI e rpi-snapclient includono nelle loro immagini Docker. SnapCTRL, SnapClient iOS e SnapClient Android sono tutti client di controllo/ascolto — nessuno di loro serve audio.
 
 ## Topologie di Deployment
 
@@ -144,18 +153,19 @@ Quali componenti girano su quale hardware e come combinarli.
 
 #### Componenti vs Hardware
 
-| | **PC** | **NUC** | **ARM 7v (Pi Zero)** | **ARM 64v (Pi 3/4/5)** |
-|---|:---:|:---:|:---:|:---:|
-| **Server** | X | X | — | X |
-| **Client** | X | X | X | X |
-| **CTRL** | X | — | — | — |
-| **Sorgente MPD** | X | X | N/A | X |
-| **Stream** | N/A | N/A | N/A | N/A |
+| | **PC** | **NUC** | **ARM 7v (Pi Zero)** | **ARM 64v (Pi 3/4/5)** | **iPhone/iPad** | **Android** |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Server** | X | X | — | X | — | — |
+| **rpi-snapclient** | X | X | X | X | — | — |
+| **SnapClient iOS** | — | — | — | — | X | — |
+| **SnapClient Android** | — | — | — | — | — | X |
+| **CTRL** | X | — | — | — | — | — |
+| **Sorgente MPD** | X | X | N/A | X | — | — |
 
 - **CTRL** richiede una GUI desktop (PySide6/Qt6) — disponibile solo su PC (laptop/desktop).
-- **Pi Zero** (ARM 7v): solo client. CPU/RAM insufficienti per server o MPD.
+- **Pi Zero** (ARM 7v): solo rpi-snapclient. CPU/RAM insufficienti per server o MPD.
 - **MPD** non applicabile su Pi Zero — troppo debole per indicizzazione e decodifica musicale.
-- **Stream** e' N/A ovunque — lo streaming TCP e' una funzionalita' del server, non un pacchetto installabile separato.
+- **SnapClient iOS/Android** — disponibili presto; si connettono a qualsiasi server Snapcast come endpoint audio personale.
 
 #### Hardware vs Pacchetti Installabili
 
@@ -442,7 +452,8 @@ Servizi pubblicati:
 | Porta | Direzione | Protocollo | Scopo |
 |-------|-----------|------------|-------|
 | 1704 | Server → Client | TCP | Stream audio |
-| 1780 | Controller → Server | TCP | API JSON-RPC |
+| 1705 | Controller/App → Server | TCP | API di controllo JSON-RPC (SnapCTRL, iOS, Android) |
+| 1780 | Browser → Server | HTTP | Web UI + JSON-RPC via HTTP |
 | 6600 | App → Server | TCP | Controllo MPD |
 | 4953 | Sorgente → Server | TCP | Input audio TCP |
 | 5353 | Multicast | UDP | Discovery mDNS |

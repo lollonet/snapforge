@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="branding/hero.svg" alt="SnapForge — The open-source Sonos alternative" width="100%">
+  <img src="branding/hero.svg" alt="SnapForge — Self-hosted multiroom audio" width="100%">
 </p>
 
 <p align="center">
@@ -14,23 +14,32 @@
 
 ---
 
-> **The open-source Sonos alternative.** Stream music from your library, AirPlay, or any source to every room in perfect sync. Runs on Raspberry Pi hardware you already own.
+> **Self-hosted multiroom audio.** Stream music to every room in perfect sync — from your library, AirPlay, Spotify, or any source. Runs on hardware you already own.
 
 ## The Ecosystem
 
+### Open Platform — free & self-hosted
+
 | Component | What it does | Repository |
 |-----------|-------------|------------|
-| **snapMULTI** | Server — MPD, AirPlay & TCP audio sources in Docker | [snapMULTI](https://github.com/lollonet/snapMULTI) |
-| **rpi-snapclient-usb** | Client — turns a Raspberry Pi into a room speaker (11 DAC HATs) | [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) |
-| **SnapCTRL** | Controller — desktop app for volume, groups, now playing (Qt6) | [snapctrl](https://github.com/lollonet/snapctrl) |
-| **santcasp** | Engine — SnapForge-maintained fork of Snapcast | [santcasp](https://github.com/lollonet/santcasp) |
+| **snapMULTI** | Server — Spotify, AirPlay, Tidal, MPD & TCP sources in Docker | [snapMULTI](https://github.com/lollonet/snapMULTI) |
+| **rpi-snapclient-usb** | Room speaker — Raspberry Pi audio endpoint with 11 DAC HAT options | [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) |
+| **santcasp** | Engine — prebuilt Snapcast binaries for Linux, macOS & Windows | [santcasp](https://github.com/lollonet/santcasp) |
+
+### Native Apps — coming soon
+
+| App | What it does | Availability |
+|-----|-------------|--------------|
+| **SnapClient iOS** | iPhone & iPad — synchronized playback, server control, now playing | App Store — coming soon |
+| **SnapClient Android** | Android — synchronized playback, server control, Material 3 UI | Play Store — coming soon |
+| **SnapCTRL** | Desktop controller — volume, groups, album art · free on Linux, paid on macOS/Windows | Mac App Store & Microsoft Store — coming soon |
 
 ## Architecture
 
 ```
                     ┌─────────────────────────────────────────┐
                     │           AUDIO SOURCES                 │
-                    │  MPD │ AirPlay │ TCP Stream │ Spotify   │
+                    │  MPD │ AirPlay │ Spotify │ Tidal │ TCP  │
                     └──────────────────┬──────────────────────┘
                                        │
                                        ▼
@@ -49,32 +58,34 @@
     │ HiFiBerry DAC+  │      │ IQaudio DigiAMP │      │ USB DAC         │
     └─────────────────┘      └─────────────────┘      └─────────────────┘
 
+              ┌─────────────────────────────────────────────────┐
+              │              SnapForge Apps (coming soon)       │
+              │  ┌───────────────────┐  ┌──────────────────┐   │
+              │  │  SnapClient iOS   │  │SnapClient Android│   │
+              │  │  iPhone · iPad    │  │  Android device  │   │
+              │  └───────────────────┘  └──────────────────┘   │
+              └─────────────────────────────────────────────────┘
+
                     ┌─────────────────────────────────────────┐
-                    │            SnapCTRL                     │
-                    │  Desktop app for volume, groups,        │
-                    │  stream selection (Windows/Mac/Linux)   │
+                    │            SnapCTRL (coming soon)       │
+                    │  Desktop controller — groups, volume    │
+                    │  free on Linux · paid on macOS/Windows  │
                     └─────────────────────────────────────────┘
 ```
 
 ## Features
 
-### Server (snapMULTI)
-- Three audio sources: MPD (local library), AirPlay, TCP input
-- Docker-based deployment with host networking
-- mDNS/Avahi autodiscovery
-- FLAC streaming at 48kHz/16bit
+### Open Platform
 
-### Clients (rpi-snapclient-usb)
-- Support for 11 audio HATs (HiFiBerry, IQaudio, Allo, JustBoom, USB)
-- Album art display service
-- Automated setup scripts
-- Docker or native installation
+- **[snapMULTI](https://github.com/lollonet/snapMULTI)** — audio server with Spotify (librespot), AirPlay (shairport-sync), Tidal, MPD and TCP sources; Docker-based; mDNS autodiscovery
+- **[rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb)** — Raspberry Pi audio endpoint; 11 audio HAT profiles, album art display, spectrum analyzer, zero-touch install
+- **[santcasp](https://github.com/lollonet/santcasp)** — prebuilt snapclient/snapserver packages for Ubuntu, Debian, macOS and Windows
 
-### Controller (SnapCTRL)
-- Native Qt6 desktop application
-- Real-time control via JSON-RPC
-- Group and client volume control
-- Stream source selection
+### Native Apps (coming soon)
+
+- **SnapClient iOS** — synchronized audio playback for iPhone and iPad; full server control from your pocket
+- **SnapClient Android** — synchronized audio playback for Android; Material 3 UI with album art and group control
+- **SnapCTRL** — desktop controller for macOS, Windows and Linux; groups, volume, album art, now playing; **free on Linux**
 
 ## Quick Start
 
@@ -90,12 +101,13 @@ docker compose up -d           # server is live
 git clone https://github.com/lollonet/rpi-snapclient-usb.git && cd rpi-snapclient-usb
 ./scripts/setup.sh             # pick your DAC, set room name, done
 
-# 3. Controller (your laptop)
-git clone https://github.com/lollonet/snapctrl.git && cd snapctrl
-uv pip install -e . && python -m snapctrl
+# 3. Control — open the built-in web UI
+open http://<server-ip>:1780   # volume, groups, stream selection in any browser
 ```
 
 Clients find the server automatically via mDNS. No IP addresses to configure.
+
+> **SnapCTRL** (native desktop app) and **SnapClient iOS/Android** (mobile) are coming soon — see [Native Apps](#native-apps--coming-soon) above.
 
 ## Documentation
 
@@ -128,43 +140,45 @@ One source, perfect sync across all speakers. No more echo from room to room.
 Restaurants, offices, retail spaces - synchronized audio with zone control.
 
 ### DIY Hi-Fi
-Build audiophile-grade multiroom for a fraction of commercial solutions (Sonos, HEOS, BluOS).
+Build audiophile-grade multiroom for a fraction of the cost of commercial solutions.
 
 ## Comparison
 
-| Feature | SnapForge | Sonos | Chromecast Audio | AirPlay 2 |
-|---------|-----------|-------|------------------|-----------|
+| Feature | SnapForge | Chromecast Audio | AirPlay 2 | Commercial systems |
+|---------|-----------|------------------|-----------|--------------------|
 | Open Source | ✅ | ❌ | ❌ | ❌ |
 | Self-hosted | ✅ | ❌ | ❌ | ❌ |
 | Hardware agnostic | ✅ | ❌ | ❌ | ❌ |
-| Sync accuracy | <1ms | ~30ms | ~30ms | ~50ms |
-| Cost per room | ~€50 | ~€200+ | Discontinued | €100+ |
-| Local network only | ✅ | ❌ (cloud) | ❌ (cloud) | ✅ |
+| Sync accuracy | <1ms | ~30ms | ~50ms | ~30ms |
+| Cost per room | ~€50 | Discontinued | €100+ | €200+ |
+| Local network only | ✅ | ❌ (cloud) | ✅ | ❌ (cloud) |
 
 ## Roadmap
 
+- [ ] SnapClient iOS — App Store release
+- [ ] SnapClient Android — Play Store release
+- [ ] SnapCTRL — Mac App Store & Microsoft Store release
 - [ ] Web-based controller (snapweb integration)
 - [ ] Home Assistant integration
-- [ ] Spotify Connect source
 - [ ] Pre-built Raspberry Pi images
-- [ ] Commercial support options
 
 ## Contributing
 
-Each component has its own repository with contribution guidelines. Start with the component you want to improve:
+The open platform components welcome contributions — each has its own repository and guidelines:
 
 - [snapMULTI issues](https://github.com/lollonet/snapMULTI/issues) — server and audio sources
 - [rpi-snapclient-usb issues](https://github.com/lollonet/rpi-snapclient-usb/issues) — Raspberry Pi clients
-- [snapctrl issues](https://github.com/lollonet/snapctrl/issues) — desktop controller
-- [santcasp issues](https://github.com/lollonet/santcasp/issues) — Snapcast engine fork
+- [santcasp issues](https://github.com/lollonet/santcasp/issues) — Snapcast engine binaries
+
+The native apps (SnapClient iOS, SnapClient Android, SnapCTRL) are proprietary and not open for external contributions at this time.
 
 For ecosystem-wide discussions, open an issue in this repository or visit the [project board](https://github.com/users/lollonet/projects/3).
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+The open platform components (snapMULTI, rpi-snapclient-usb, santcasp) are released under the MIT License — see [LICENSE](LICENSE) for details.
 
-All components of SnapForge are released under the MIT License.
+The native apps (SnapClient iOS, SnapClient Android, SnapCTRL) are proprietary software with separate commercial licenses.
 
 ---
 

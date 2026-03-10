@@ -309,7 +309,7 @@ High-quality DAC for critical listening.
 | **SnapForge (budget)** | €150 | €230 | DIY |
 | **SnapForge (recommended)** | €400 | €600 | DIY |
 | **SnapForge (audiophile)** | €800 | €1200 | DIY |
-| Sonos | €600+ | €1000+ | Locked ecosystem |
+| Commercial systems | €600+ | €1000+ | Locked ecosystem |
 | Bluesound | €900+ | €1500+ | Better quality |
 | Bose SoundTouch | €700+ | €1100+ | Discontinued |
 
