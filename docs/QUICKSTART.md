@@ -230,4 +230,4 @@ For more, see the [Deployment Guide troubleshooting section](DEPLOYMENT-GUIDE.md
 
 ---
 
-**SnapForge** — the open-source Sonos alternative. [github.com/lollonet/snapforge](https://github.com/lollonet/snapforge)
+**SnapForge** — self-hosted multiroom audio. [github.com/lollonet/snapforge](https://github.com/lollonet/snapforge)
