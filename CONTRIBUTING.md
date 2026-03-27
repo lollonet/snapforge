@@ -15,7 +15,8 @@ SnapForge è un ecosistema di progetti correlati ma indipendenti:
 | [snapforge](https://github.com/lollonet/snapforge) | Meta-repo, documentation / Meta-repo, documentazione |
 | [snapMULTI](https://github.com/lollonet/snapMULTI) | Server component / Componente server |
 | [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) | Raspberry Pi client / Client Raspberry Pi |
-| [snapctrl](https://github.com/lollonet/snapctrl) | Desktop controller / Controller desktop |
+| [santcasp](https://github.com/lollonet/santcasp) | Snapcast engine binaries / Binari del motore Snapcast |
+| snapctrl | Desktop controller (proprietary) / Controller desktop (proprietario) |
 
 ## Where to Contribute / Dove Contribuire
 
@@ -34,7 +35,11 @@ Per contributi di codice, contribuisci al repository del componente specifico:
 
 - **Server issues/features**: [snapMULTI](https://github.com/lollonet/snapMULTI/issues)
 - **Client issues/features**: [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb/issues)
-- **Desktop app issues/features**: [snapctrl](https://github.com/lollonet/snapctrl/issues)
+- **Snapcast engine issues/features**: [santcasp](https://github.com/lollonet/santcasp/issues)
+
+The native apps (SnapClient iOS, SnapClient Android, SnapCTRL) are proprietary and not open for external contributions at this time.
+
+Le app native (SnapClient iOS, SnapClient Android, SnapCTRL) sono proprietarie e non accettano contributi esterni al momento.
 
 ## How to Contribute / Come Contribuire
 

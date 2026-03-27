@@ -30,216 +30,64 @@ Guida completa per il deployment di un sistema audio multiroom SnapForge.
 ### Requisiti di Rete
 
 - Tutti i dispositivi sulla stessa subnet (o routing con multicast)
-- Porte 1704, 1780, 6600 accessibili
+- Porte 1704, 1705, 1780, 6600 accessibili
 - mDNS/Bonjour funzionante (porta 5353 UDP)
 
 ## Fase 1: Deployment del Server (snapMULTI)
 
-### Step 1: Preparare l'Host
+Segui la **[guida all'installazione di snapMULTI](https://github.com/lollonet/snapMULTI#quick-start)** — plug-and-play per Raspberry Pi, oppure setup manuale Docker su qualsiasi macchina Linux.
+
+### Verifica il Server
+
+Dopo il deployment, conferma che il server funziona:
 
 ```bash
-# Installa Docker
-curl -fsSL https://get.docker.com | sh
-sudo usermod -aG docker $USER
-
-# Installa Avahi (per mDNS)
-sudo apt update
-sudo apt install -y avahi-daemon avahi-utils
-
-# Verifica che Avahi sia attivo
-systemctl status avahi-daemon
-```
-
-### Step 2: Clona e Configura
-
-```bash
-# Clona il repository
-git clone https://github.com/lollonet/snapMULTI.git
-cd snapMULTI
-
-# Copia il template dell'environment
-cp .env.example .env
-```
-
-### Step 3: Modifica la Configurazione
-
-Modifica `.env` con le tue impostazioni:
-
-```bash
-# Percorsi libreria musicale sull'host
-MUSIC_LOSSLESS_PATH=/home/utente/Musica/FLAC
-MUSIC_LOSSY_PATH=/home/utente/Musica/MP3
-
-# IP del server (per la connessione dei client)
-SERVER_IP=192.168.1.100
-
-# Fuso orario
-TZ=Europe/Rome
-```
-
-### Step 4: Avvia i Servizi
-
-```bash
-# Avvia lo stack
-docker compose up -d
-
-# Verifica che i servizi siano attivi
+# Servizi attivi
 docker ps
 
-# Controlla i log
-docker logs snapserver
-docker logs mpd
-```
-
-### Step 5: Verifica il Server
-
-```bash
-# Testa l'advertisement mDNS
+# Advertisement mDNS
 avahi-browse -r _snapcast._tcp --terminate
 
-# Testa l'API JSON-RPC
+# API JSON-RPC risponde
 curl -s http://localhost:1780/jsonrpc \
   -H "Content-Type: application/json" \
   -d '{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}' | jq
 
-# Testa MPD
+# MPD accessibile
 mpc status
-```
-
-### Step 6: Aggiorna il Database Musicale
-
-```bash
-# Avvia l'aggiornamento del database MPD
-printf 'update\n' | nc localhost 6600
-
-# Monitora il progresso
-watch -n1 'printf "status\n" | nc localhost 6600 | grep updating'
 ```
 
 ## Fase 2: Deployment dei Client (rpi-snapclient-usb)
 
-### Opzione A: Setup Automatizzato (Raccomandato)
-
-```bash
-# Sul Raspberry Pi
-git clone https://github.com/lollonet/rpi-snapclient-usb.git
-cd rpi-snapclient-usb
-
-# Esegui il setup interattivo
-./scripts/setup.sh
-
-# Segui i prompt per:
-# 1. Selezionare il tuo HAT audio
-# 2. Configurare la connessione al server
-# 3. Impostare il nome del client
-```
-
-### Opzione B: Setup con Docker
-
-```bash
-# Su Raspberry Pi con Docker installato
-docker run -d \
-  --name snapclient \
-  --device /dev/snd \
-  --network host \
-  -e SNAPSERVER=192.168.1.100 \
-  lollonet/snapclient:latest
-```
-
-### Opzione C: Installazione Nativa
-
-```bash
-# Installa snapclient
-sudo apt update
-sudo apt install -y snapclient
-
-# Configura
-sudo nano /etc/default/snapclient
-
-# Imposta: SNAPCLIENT_OPTS="--host 192.168.1.100 --hostID soggiorno"
-
-# Abilita e avvia
-sudo systemctl enable snapclient
-sudo systemctl start snapclient
-```
-
-### Configurazione HAT Audio
-
-Per gli HAT audio I2S, aggiungi a `/boot/config.txt`:
-
-```ini
-# HiFiBerry DAC+
-dtoverlay=hifiberry-dacplus
-
-# HiFiBerry Digi+
-dtoverlay=hifiberry-digi
-
-# IQaudio DAC+
-dtoverlay=iqaudio-dacplus
-
-# Allo Boss
-dtoverlay=allo-boss-dac-pcm512x-audio
-
-# JustBoom DAC
-dtoverlay=justboom-dac
-```
-
-Poi riavvia:
-
-```bash
-sudo reboot
-```
+Segui la **[guida al setup di rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb#zero-touch-auto-install-recommended)** — auto-installazione zero-touch (raccomandata) o script interattivo. Supporta 11 HAT audio e DAC USB.
 
 ### Verifica la Connessione del Client
 
 ```bash
-# Controlla se è connesso al server
-journalctl -u snapclient -f
+# Controlla se connesso al server
+docker ps   # snapclient dovrebbe essere attivo
 
 # Sul server, verifica che il client appaia
 curl -s http://localhost:1780/jsonrpc \
   -d '{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}' | jq '.result.server.groups[].clients'
 ```
 
-## Fase 3: Setup del Controller (SnapCTRL)
+## Fase 3: Controlla il tuo Sistema
 
-### Installazione
+### Interfaccia Web Integrata (disponibile ora)
 
-```bash
-# Clona il repository
-git clone https://github.com/lollonet/snapctrl.git
-cd snapctrl
+Apri `http://<ip-server>:1780` in qualsiasi browser per gestire diffusori, cambiare sorgente e regolare il volume.
 
-# Installa con uv (raccomandato)
-uv pip install -e .
+### App Native (disponibili presto)
 
-# Oppure con pip
-pip install -e .
-```
-
-### Esecuzione
-
-```bash
-# Avvia la GUI
-python -m snapctrl
-
-# Oppure se installato globalmente
-snapctrl
-```
-
-### Configurazione
-
-Al primo avvio:
-1. Inserisci l'IP del server (es. `192.168.1.100`)
-2. Inserisci la porta (default: `1780`)
-3. Clicca Connetti
+**SnapCTRL** (controller desktop) e **SnapClient iOS/Android** (mobile) sono disponibili presto — vedi [App Native](../README.it.md#app-native--disponibili-presto).
 
 ## Checklist di Verifica
 
 ### Server
 
 - [ ] Container Docker attivi (`docker ps`)
-- [ ] Snapserver in ascolto su 1704, 1780 (`ss -tlnp | grep -E "1704|1780"`)
+- [ ] Snapserver in ascolto su 1704, 1705, 1780 (`ss -tlnp | grep -E "1704|1705|1780"`)
 - [ ] MPD in ascolto su 6600 (`ss -tlnp | grep 6600`)
 - [ ] Servizi mDNS pubblicati (`avahi-browse -r _snapcast._tcp`)
 - [ ] Database musicale indicizzato (`mpc stats`)
@@ -339,6 +187,7 @@ sudo systemctl restart avahi-daemon
 # Limita solo alla rete locale
 sudo ufw default deny incoming
 sudo ufw allow from 192.168.1.0/24 to any port 1704
+sudo ufw allow from 192.168.1.0/24 to any port 1705
 sudo ufw allow from 192.168.1.0/24 to any port 1780
 sudo ufw allow from 192.168.1.0/24 to any port 6600
 sudo ufw enable

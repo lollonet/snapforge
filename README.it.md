@@ -77,7 +77,7 @@
 
 ### Piattaforma Open
 
-- **[snapMULTI](https://github.com/lollonet/snapMULTI)** — server audio con Spotify (librespot), AirPlay (shairport-sync), Tidal, MPD e sorgenti TCP; basato su Docker; autodiscovery mDNS
+- **[snapMULTI](https://github.com/lollonet/snapMULTI)** — server audio con Spotify (go-librespot), AirPlay (shairport-sync), Tidal, MPD e sorgenti TCP; basato su Docker; autodiscovery mDNS
 - **[rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb)** — endpoint audio Raspberry Pi; 11 profili HAT audio, visualizzazione copertine, analizzatore spettro, installazione zero-touch
 - **[santcasp](https://github.com/lollonet/santcasp)** — pacchetti snapclient/snapserver precompilati per Ubuntu, Debian, macOS e Windows
 

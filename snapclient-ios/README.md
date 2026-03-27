@@ -161,7 +161,7 @@ snapclient-ios/
 | **SnapForge** (meta-repo) | [lollonet/snapforge](https://github.com/lollonet/snapforge) |
 | **snapMULTI** (server) | [lollonet/snapMULTI](https://github.com/lollonet/snapMULTI) |
 | **rpi-snapclient-usb** (Pi client) | [lollonet/rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) |
-| **SnapCTRL** (desktop controller) | [lollonet/snapctrl](https://github.com/lollonet/snapctrl) |
+| **SnapCTRL** (desktop controller) | *proprietary* |
 | **santcasp** (Snapcast fork) | [lollonet/santcasp](https://github.com/lollonet/santcasp) |
 | **Snapcast** (upstream) | [badaix/snapcast](https://github.com/badaix/snapcast) |
 

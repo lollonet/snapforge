@@ -29,7 +29,7 @@ For the full platform support matrix, see [Architecture — Deployment Topologie
 |------|----------|---------------|
 | **Server** | Any Linux PC or Raspberry Pi 4 | [snapMULTI](https://github.com/lollonet/snapMULTI) |
 | **Client** (one per room) | Raspberry Pi + audio HAT or USB DAC | [rpi-snapclient](https://github.com/lollonet/rpi-snapclient-usb) |
-| **Controller** (optional) | Your laptop (macOS/Linux/Windows) | [SnapCTRL](https://github.com/lollonet/snapctrl) |
+| **Controller** (optional) | Any browser, or your laptop | Built-in web UI · SnapCTRL (coming soon) |
 
 Don't have a Raspberry Pi? You can still try the server + controller on a single machine.
 
@@ -37,97 +37,46 @@ Don't have a Raspberry Pi? You can still try the server + controller on a single
 
 ## Step 1 — Start the server
 
-On the machine that will be your server:
+Follow the **[snapMULTI Quick Start](https://github.com/lollonet/snapMULTI#quick-start)** — choose between plug-and-play (Raspberry Pi) or manual Docker setup on any Linux machine.
+
+The short version:
 
 ```bash
-# Install Docker if you don't have it
-curl -fsSL https://get.docker.com | sh
-
-# Install Avahi for network discovery
-sudo apt install -y avahi-daemon
-
-# Clone and start
-git clone https://github.com/lollonet/snapMULTI.git
-cd snapMULTI
-cp .env.example .env
-```
-
-Edit `.env` — set only these three paths:
-
-```bash
-MUSIC_LOSSLESS_PATH=/path/to/your/FLAC
-MUSIC_LOSSY_PATH=/path/to/your/MP3
-TZ=Europe/Rome
-```
-
-Start it:
-
-```bash
+git clone https://github.com/lollonet/snapMULTI.git && cd snapMULTI
+cp .env.example .env    # edit paths to your music
 docker compose up -d
 ```
 
-**Verify it works:**
-
-```bash
-# You should see snapserver and mpd running
-docker ps
-
-# You should see _snapcast._tcp advertised
-avahi-browse -r _snapcast._tcp --terminate
-```
-
-Server is ready. It's discoverable on your network.
+> See the [full snapMULTI README](https://github.com/lollonet/snapMULTI#readme) for all options including Spotify, AirPlay, Tidal, and TCP sources.
 
 ---
 
 ## Step 2 — Add a room (Raspberry Pi client)
 
-On each Raspberry Pi that has an audio HAT or USB DAC:
+Follow the **[rpi-snapclient-usb setup](https://github.com/lollonet/rpi-snapclient-usb#zero-touch-auto-install-recommended)** — zero-touch auto-install or interactive script. Supports 11 audio HATs.
+
+The short version:
 
 ```bash
-git clone https://github.com/lollonet/rpi-snapclient-usb.git
-cd rpi-snapclient-usb
-./scripts/setup.sh
+git clone https://github.com/lollonet/rpi-snapclient-usb.git && cd rpi-snapclient-usb
+./scripts/setup.sh     # pick your DAC, set room name, done
 ```
 
-The setup script asks you to:
-1. **Pick your audio HAT** from 11 supported models (HiFiBerry, IQaudio, JustBoom, Allo, USB...)
-2. **Pick a display resolution** if you have a screen attached (for album art)
-3. **Set a room name** (e.g., "Living Room", "Kitchen")
+Clients find the server automatically via mDNS. Repeat for each room.
 
-That's it. The client will:
-- Find the server automatically via mDNS (no IP to configure)
-- Start playing whatever the server is streaming
-- Show album art on the attached display
-
-**Verify:**
-
-```bash
-docker ps   # snapclient should be running
-```
-
-Repeat for each room.
+> See the [full rpi-snapclient-usb README](https://github.com/lollonet/rpi-snapclient-usb#readme) for hardware requirements, display setup, and troubleshooting.
 
 ---
 
-## Step 3 — Control from your desktop
+## Step 3 — Control your system
 
-On your laptop:
+Open the built-in web UI in any browser:
 
 ```bash
-git clone https://github.com/lollonet/snapctrl.git
-cd snapctrl
-uv pip install -e .
-python -m snapctrl
+open http://<server-ip>:1780   # volume, groups, stream selection
 ```
 
-> No `uv`? Use `pip install -e .` instead. Or just try the demo: `python demo.py`
-
-SnapCTRL will:
-- Discover the server on your network
-- Show all connected rooms
-- Let you control volume, mute, and group rooms together
-- Show what's playing with album art
+> **SnapCTRL** (native desktop app) and **SnapClient iOS/Android** (mobile) are coming soon — see [Native Apps](../README.md#native-apps--coming-soon).
 
 ---
 
@@ -191,7 +140,7 @@ Sync accuracy is **sub-millisecond**. No more echo between rooms.
 | Choose hardware and compare costs | [Hardware BOM](HARDWARE-BOM.md) |
 | See example setups | [Home Setup](../examples/home-setup/) / [Studio Setup](../examples/studio-setup/) |
 | Control from your phone | Use any MPD client app (MALP, MPDroid, MPoD) |
-| Add Spotify Connect | Coming soon — see [Roadmap](../README.md#roadmap) |
+| Stream from Spotify | Open Spotify → Connect → select your server ([details](https://github.com/lollonet/snapMULTI#how-it-works)) |
 
 ---
 
@@ -217,13 +166,17 @@ aplay -l
 speaker-test -t wav -c 2
 ```
 
-**SnapCTRL can't connect?**
+**Apps can't connect?**
 
-Make sure port 1780 is accessible from your laptop:
+SnapCTRL and mobile apps connect via TCP on port 1705. The web UI uses port 1780. Make sure both are accessible:
 
 ```bash
+# Test HTTP/web UI (port 1780)
 curl -s http://SERVER_IP:1780/jsonrpc \
   -d '{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}' | jq .
+
+# Test TCP control port (port 1705) — used by SnapCTRL, iOS, Android
+nc -zv SERVER_IP 1705
 ```
 
 For more, see the [Deployment Guide troubleshooting section](DEPLOYMENT-GUIDE.md#troubleshooting).

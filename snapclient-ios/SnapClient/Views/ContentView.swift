@@ -333,6 +333,6 @@ struct ServersView: View {
     private func connectTo(host: String, port: Int) {
         engine.start(host: host, port: port)
         // Also connect the RPC client for control
-        rpcClient.connect(host: host, port: 1780)
+        rpcClient.connect(host: host, port: 1705)
     }
 }

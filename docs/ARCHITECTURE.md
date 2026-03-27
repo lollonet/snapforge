@@ -14,7 +14,7 @@ SnapForge consists of an open platform and native apps that work together to pro
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              AUDIO SOURCES                                  │
 ├─────────────────┬─────────────────┬─────────────────┬───────────────────────┤
-│ Local Library   │ AirPlay         │ TCP Stream      │ Spotify (librespot)   │
+│ Local Library   │ AirPlay         │ TCP Stream      │ Spotify (go-librespot)   │
 │ (MPD)           │ (iOS/macOS)     │ (any app)       │ Tidal (ARM)           │
 └────────┬────────┴────────┬────────┴────────┬────────┴───────────────────────┘
          │                 │                 │
@@ -23,7 +23,7 @@ SnapForge consists of an open platform and native apps that work together to pro
 │                         snapMULTI (Server)                                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
 │  │     MPD     │  │ Shairport   │  │ TCP Server  │  │    Snapserver       │ │
-│  │  Port 6600  │  │   Sync      │  │  Port 4953  │  │  Ports 1704/1780    │ │
+│  │  Port 6600  │  │   Sync      │  │  Port 4953  │  │  Ports 1704/1705/1780│ │
 │  │             │  │  (AirPlay)  │  │             │  │                     │ │
 │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  │  - Stream mgmt      │ │
 │         │                │                │         │  - Client registry  │ │
@@ -100,8 +100,8 @@ Hardware, platform and capability matrix for all SnapForge components.
 | | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** | **SnapClient iOS** | **SnapClient Android** |
 |---|---|---|---|---|---|---|
 | **Role** | Audio hub + sources | Room speaker endpoint | Desktop control GUI | Core Snapcast binaries | iOS audio client | Android audio client |
-| **Platform** | Any Linux (x86_64, ARM64) | Raspberry Pi (ARM64) | macOS, Linux, Windows | Linux, macOS, Windows | iOS 17+ (iPhone/iPad) | Android (API 26+) |
-| **Install method** | Docker Compose | Docker + setup script | pip/uv (Linux) · App Store/Microsoft Store | .deb / .tar.gz / .zip | App Store (coming soon) | Play Store (coming soon) |
+| **Platform** | Any Linux (x86_64, ARM64) | Raspberry Pi (ARM64) | macOS, Linux, Windows | Linux, macOS, Windows | iOS 16+ (iPhone/iPad) | Android (API 26+) |
+| **Install method** | Docker Compose | Docker + setup script | pip/uv · stores (coming soon) | .deb / .tar.gz / .zip | App Store (coming soon) | Play Store (coming soon) |
 | **Runs headless** | Yes | Yes | No | Yes | No | No |
 | **Runs in Docker** | Yes | Yes | No | No | No | No |
 
@@ -113,7 +113,7 @@ Hardware, platform and capability matrix for all SnapForge components.
 | **Min RAM** | 1 GB | 512 MB | 256 MB | 64 MB | — (OS managed) | — (OS managed) |
 | **Rec RAM** | 2 GB | 1 GB | — | — | — | — |
 | **Min storage** | 1 GB + music library | 8 GB SD card | 200 MB | 50 MB | ~50 MB | ~50 MB |
-| **Typical hardware** | RPi 4 4GB, NUC, NAS, old laptop | RPi 3B/4/5 + audio HAT | Any laptop/desktop | Embedded in other components | iPhone / iPad (iOS 17+) | Android phone/tablet (API 26+) |
+| **Typical hardware** | RPi 4 4GB, NUC, NAS, old laptop | RPi 3B/4/5 + audio HAT | Any laptop/desktop | Embedded in other components | iPhone / iPad (iOS 16+) | Android phone/tablet (API 26+) |
 | **Price per unit** | €50–150 (RPi) / €0 (reuse PC) | €35–80 (RPi + HAT + case + PSU) | Free (Linux) · paid (macOS/Windows) | Free | Paid (App Store) | Paid (Play Store) |
 
 ### Audio Capabilities
@@ -139,8 +139,8 @@ Hardware, platform and capability matrix for all SnapForge components.
 
 | | **snapMULTI** | **rpi-snapclient** | **SnapCTRL** | **santcasp** | **SnapClient iOS** | **SnapClient Android** |
 |---|---|---|---|---|---|---|
-| **Runtime** | Docker, Avahi | Docker, ALSA | Python 3.11+, PySide6, Qt6 | — | iOS 17+, AVAudioEngine | Android API 26+, Oboe |
-| **Build** | — (pre-built images) | — (pre-built images) | pip / uv | CMake, C++17 compiler | Xcode 17+, autotools | Android Studio, NDK, CMake |
+| **Runtime** | Docker, Avahi | Docker, ALSA | Python 3.11+, PySide6, Qt6 | — | iOS 16+, AVAudioEngine | Android API 26+, Oboe |
+| **Build** | — (pre-built images) | — (pre-built images) | pip / uv | CMake, C++17 compiler | Xcode 16+, autotools | Android Studio, NDK, CMake |
 | **CI/CD** | GitHub Actions (self-hosted ARM64) | GitHub Actions (self-hosted ARM64) | GitHub Actions | Manual builds | GitHub Actions | GitHub Actions (self-hosted) |
 
 > **Note**: santcasp provides the core `snapserver` and `snapclient` binaries that snapMULTI and rpi-snapclient wrap in their Docker images. SnapCTRL, SnapClient iOS, and SnapClient Android are all purely control/listening clients — none of them serve audio.
@@ -305,7 +305,8 @@ The server component runs as Docker containers with host networking for mDNS sup
 | Service | Port | Protocol | Purpose |
 |---------|------|----------|---------|
 | Snapserver | 1704 | TCP | Audio streaming to clients |
-| Snapserver | 1780 | HTTP | JSON-RPC control API |
+| Snapserver | 1705 | TCP | JSON-RPC control API (SnapCTRL, iOS, Android) |
+| Snapserver | 1780 | HTTP | Web UI + JSON-RPC over HTTP |
 | MPD | 6600 | TCP | Music Player Daemon control |
 | TCP Input | 4953 | TCP | External audio stream input |
 | mDNS | 5353 | UDP | Service discovery (via host Avahi) |
