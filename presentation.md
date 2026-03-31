@@ -42,6 +42,8 @@ style: |
   }
 ---
 
+<!-- markdownlint-disable MD001 MD013 MD022 MD025 MD036 MD040 MD060 -->
+
 <!-- _class: lead -->
 
 # SnapForge
@@ -72,9 +74,9 @@ Far funzionare l'audio multiroom su Raspberry Pi non e' semplice:
 ```
 ┌─────────────────────────────────────────────────┐
 │                  SnapForge                       │
-│            (repo centrale + project)             │
+│               (repo ecosistema)                  │
 ├────────────────┬───────────────┬─────────────────┤
-│  snapMULTI     │ rpi-snapclient│   SnapCTRL      │
+│  snapMULTI     │ SnapClient Pi │   SnapCTRL      │
 │  (server)      │   (client)    │  (app desktop)  │
 ├────────────────┼───────────────┼─────────────────┤
 │ Snapserver     │ Snapclient    │ PySide6 / Qt    │
@@ -114,7 +116,7 @@ services:
 
 ---
 
-## rpi-snapclient — Il Client
+## SnapClient Pi — Il Client
 
 **Trasforma un Raspberry Pi in un player audio con display**
 
@@ -203,19 +205,19 @@ Push su main
 
 ---
 
-## Gestione del progetto
+## Gestione dell'ecosistema
 
-**Un unico GitHub Project per tutti i repository**
+**Boundary chiari tra repository, non un layer operativo duplicato**
 
 | Cosa | Dettaglio |
 |------|-----------|
-| Campi custom | Componente, Priorita', Tipo, Effort |
-| Label | 17 etichette uguali su tutti e 4 i repo |
-| Template issue | Bug report + Feature request con form guidati |
-| Tracciamento | Vista per componente e cross-ecosistema |
+| `snapforge` | Docs ecosistema, naming, roadmap pubblica alta |
+| `snapMULTI` | Server, sorgenti, deployment e runtime |
+| `SnapClient Pi` | Endpoint Raspberry Pi, DAC/HAT, device UX |
+| `SnapCTRL` | Controller desktop separato |
 
 > Tutti i repo parlano la stessa lingua:
-> stesse etichette, stessi template, stessa scala di priorita'.
+> stesso naming, boundary chiari, source of truth esplicita.
 
 ---
 
@@ -223,7 +225,7 @@ Push su main
 
 | Giorno | Cosa e' successo |
 |--------|------------------|
-| **24 Gen** | Primo commit rpi-snapclient: player + display copertine |
+| **24 Gen** | Primo commit SnapClient Pi: player + display copertine |
 | | Primo commit SnapCTRL: app desktop di controllo |
 | **25 Gen** | Client: supporto 11 schede audio, CI/CD, Docker multi-arch |
 | **26 Gen** | Client: **release v1.0.0** |
@@ -232,7 +234,7 @@ Push su main
 | | Client: visualizzatore audio, autodiscovery, metadati |
 | | SnapCTRL: pannello sorgenti, sync volume, bundle macOS |
 | **28 Gen** | SnapCTRL: metadati MPD + copertine album |
-| | Nasce SnapForge: meta-repo + project board unificato |
+| | Nasce SnapForge: ecosystem repo + docs unificate |
 | | Tutti i repo: label, template, CI su runner dedicato |
 
 ---
@@ -249,7 +251,7 @@ Push su main
 | Discovery | Avahi / mDNS (`_snapcast._tcp`) |
 | Visualizzazione | CAVA (Console Audio Visualizer) |
 | CI/CD | GitHub Actions, runner self-hosted ARM64 |
-| Gestione progetto | GitHub Projects v2 |
+| Coordinamento docs | SnapForge ecosystem repo |
 
 ---
 
@@ -263,7 +265,7 @@ Push su main
 | PySide6 invece di Electron | Prestazioni native, app piu' leggera |
 | MPD come sorgente primaria | Solido, metadati ricchi, riproduzione senza pause |
 | File di config (no env vars) | Piu' facili da versionare, leggere e condividere |
-| Un solo project board | Vista unica su tutti i componenti |
+| Boundary chiari tra repo | Meno duplicazione, ownership piu' chiara |
 
 ---
 
@@ -287,9 +289,9 @@ github.com/lollonet
 
 | Repo | Ruolo |
 |------|-------|
-| `snapforge` | Repo centrale + project board |
+| `snapforge` | Repo ecosistema + documentazione |
 | `snapMULTI` | Server Snapcast multi-sorgente |
-| `rpi-snapclient-usb` | Client RPi con supporto DAC |
-| `snapctrl` | Controller desktop PySide6 |
+| `snapclient-pi` | Client RPi con supporto DAC |
+| `SnapCTRL` | Controller desktop PySide6 |
 
 > Da zero ad audio multiroom in 5 giorni.

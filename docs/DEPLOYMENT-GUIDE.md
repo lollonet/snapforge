@@ -1,228 +1,256 @@
+<!-- markdownlint-disable MD013 MD033 MD041 -->
+
 <p align="center">
   <img src="../branding/logo.svg" alt="SnapForge" width="80">
 </p>
 
-# SnapForge Deployment Guide
+# Deployment Guide
 
-Complete guide to deploying a SnapForge multiroom audio system.
+This guide describes how to deploy the SnapForge ecosystem at a high level.
 
-## Prerequisites
+It is intentionally not a product installation manual. Its purpose is to help you choose a deployment shape, roll it out in the right order, and verify success without duplicating the setup instructions that belong in the product repositories.
 
-### Server Requirements
+## Scope
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| CPU | 2 cores | 4 cores |
-| RAM | 1 GB | 2 GB |
-| Storage | 1 GB + music | SSD recommended |
-| Network | 100 Mbps | Gigabit |
-| OS | Linux (Docker) | Ubuntu 22.04+ / Debian 12+ |
+This guide covers:
 
-### Client Requirements (Raspberry Pi)
+- recommended deployment order
+- common deployment topologies
+- verification milestones
+- network and environment assumptions
+- production-oriented guidance at the ecosystem level
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| Model | RPi 3B | RPi 4 (2GB+) |
-| Storage | 8 GB SD | 16 GB+ SD |
-| Network | WiFi | Ethernet (more stable) |
-| Audio | USB DAC | I2S HAT (better quality) |
+This guide does not replace:
 
-### Network Requirements
+- `snapMULTI` installation and service configuration
+- `SnapClient Pi` hardware setup and device provisioning
+- `Santcasp` packaging and fork-specific runtime instructions
 
-- All devices on same subnet (or routed with multicast)
-- Ports 1704, 1705, 1780, 6600 accessible
-- mDNS/Bonjour working (port 5353 UDP)
+## Source Of Truth
 
-## Phase 1: Server Deployment (snapMULTI)
+Use the correct repository for the actual implementation work:
 
-Follow the **[snapMULTI installation guide](https://github.com/lollonet/snapMULTI#quick-start)** for full step-by-step instructions (plug-and-play for Raspberry Pi, or manual Docker setup for any Linux machine).
+| Need | Source of truth |
+| --- | --- |
+| Server deployment | [`snapMULTI`](https://github.com/lollonet/snapMULTI) |
+| Raspberry Pi endpoint deployment | [`SnapClient Pi`](https://github.com/lollonet/snapclient-pi) |
+| Fork/package-layer deployment | [`Santcasp`](https://github.com/lollonet/santcasp) |
+| Ecosystem boundaries and topology | [Architecture](ARCHITECTURE.md) |
 
-### Verify Server
+## Recommended Rollout Order
 
-After deployment, confirm the server is running:
+Deploy in this order:
 
-```bash
-# Services running
-docker ps
+1. bring up `snapMULTI`
+2. prove one working audio source
+3. add one `SnapClient Pi` endpoint
+4. verify end-to-end playback
+5. add more rooms only after one room is stable
+6. layer in native clients or controller apps later
 
-# mDNS advertisement
-avahi-browse -r _snapcast._tcp --terminate
+This rollout order is the most important deployment rule in the ecosystem. It keeps troubleshooting local and prevents multi-variable failures.
 
-# JSON-RPC API responds
-curl -s http://localhost:1780/jsonrpc \
-  -H "Content-Type: application/json" \
-  -d '{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}' | jq
+## Deployment Topologies
 
-# MPD accessible
-mpc status
+### 1. Baseline open-platform deployment
+
+```text
+snapMULTI server
+    |
+    +--> one SnapClient Pi room endpoint
 ```
 
-## Phase 2: Client Deployment (rpi-snapclient-usb)
+Use this for:
 
-Follow the **[rpi-snapclient-usb setup guide](https://github.com/lollonet/rpi-snapclient-usb#zero-touch-auto-install-recommended)** — zero-touch auto-install (recommended) or interactive script. Supports 11 audio HATs and USB DACs.
+- first deployment
+- validation of the open platform
+- early troubleshooting
 
-### Verify Client Connection
+This is the safest default.
 
-```bash
-# Check if connected to server
-docker ps   # snapclient should be running
+### 2. Multi-room open-platform deployment
 
-# On server, verify client appears
-curl -s http://localhost:1780/jsonrpc \
-  -d '{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}' | jq '.result.server.groups[].clients'
+```text
+snapMULTI server
+    |
+    +--> SnapClient Pi room 1
+    +--> SnapClient Pi room 2
+    +--> SnapClient Pi room 3
 ```
 
-## Phase 3: Control Your System
+Use this after the baseline deployment is already stable.
 
-### Built-in Web UI (available now)
+### 3. Open platform plus native control layer
 
-Open `http://<server-ip>:1780` in any browser to manage speakers, switch sources, and adjust volume.
-
-### Native Apps (coming soon)
-
-**SnapCTRL** (desktop controller) and **SnapClient iOS/Android** (mobile) are coming soon — see [Native Apps](../README.md#native-apps--coming-soon).
-
-## Verification Checklist
-
-### Server
-
-- [ ] Docker containers running (`docker ps`)
-- [ ] Snapserver listening on 1704, 1705, 1780 (`ss -tlnp | grep -E "1704|1705|1780"`)
-- [ ] MPD listening on 6600 (`ss -tlnp | grep 6600`)
-- [ ] mDNS services advertised (`avahi-browse -r _snapcast._tcp`)
-- [ ] Music database indexed (`mpc stats`)
-
-### Client
-
-- [ ] Snapclient service running (`systemctl status snapclient`)
-- [ ] Connected to server (check server logs)
-- [ ] Audio output working (`speaker-test -t wav -c 2`)
-- [ ] Correct audio device selected (`aplay -l`)
-
-### Controller
-
-- [ ] Can connect to server
-- [ ] Shows all groups and clients
-- [ ] Volume control works
-- [ ] Mute control works
-
-## Testing Audio
-
-### Play Test Tone
-
-```bash
-# On server, via MPD
-mpc add http://www.hochmuth.com/mp3/Haydn_Cello_Concerto_D-1.mp3
-mpc play
+```text
+snapMULTI server
+    |
+    +--> SnapClient Pi endpoints
+    +--> SnapClient iOS
+    +--> SnapClient Android
+    +--> SnapCTRL
 ```
 
-### Stream via TCP Input
+Use this when the open platform is already proven and you are expanding control surfaces or endpoint types.
 
-```bash
-# Stream internet radio
-ffmpeg -i http://stream.radioparadise.com/flac \
-  -f s16le -ar 48000 -ac 2 \
-  tcp://192.168.1.100:4953
+### 4. Direct Santcasp consumption
+
+```text
+Santcasp binaries
+    |
+    +--> consumed directly where fork/package artifacts are needed
 ```
 
-### Test AirPlay
+This is valid, but it is not the primary SnapForge deployment path for most users.
 
-1. On iPhone/iPad, open Control Center
-2. Tap AirPlay icon
-3. Select "Snapcast"
-4. Play music from any app
+## Environment Assumptions
 
-## Troubleshooting
+The deployment model assumes:
 
-### No Audio on Client
+- a trusted local network
+- stable local connectivity between server and endpoints
+- service discovery that works on the local network, or a documented manual fallback
+- enough storage and CPU for the chosen `snapMULTI` host
+- hardware-appropriate audio output on each `SnapClient Pi` device
 
-```bash
-# Check ALSA devices
-aplay -l
+For product-specific hardware and runtime requirements, use the owning repositories.
 
-# Test direct playback
-speaker-test -t wav -c 2 -D hw:0,0
+## First Production Milestone
 
-# Check snapclient output device
-snapclient --list
-```
+Treat the deployment as successful only when all of these are true:
 
-### Client Can't Find Server
+- `snapMULTI` is running
+- the server is reachable from your local network
+- at least one audio source is working
+- one `SnapClient Pi` endpoint is online
+- end-to-end playback works from server to endpoint
+- the system can be controlled from the built-in web UI
 
-```bash
-# Test direct connection
-snapclient --host 192.168.1.100
+Do not expand the topology until this milestone is solid.
 
-# Check firewall on server
-sudo ufw status
-sudo ufw allow 1704/tcp
-sudo ufw allow 1780/tcp
-```
+## Verification Flow
 
-### mDNS Not Working
+Use this sequence after each deployment step:
 
-```bash
-# On server
-avahi-browse -a --terminate
+### Server verification
 
-# Check Avahi daemon
-systemctl status avahi-daemon
+Confirm:
 
-# Restart if needed
-sudo systemctl restart avahi-daemon
-```
+- the server is up
+- the expected services are reachable
+- the control surface responds
+- at least one source path is functional
 
-### Audio Stuttering
+The detailed commands for that verification belong in `snapMULTI`.
 
-1. Increase buffer: Edit `snapserver.conf`, set `buffer = 1500`
-2. Use wired Ethernet instead of WiFi
-3. Check network congestion
-4. Reduce number of simultaneous clients
+### Endpoint verification
 
-## Production Recommendations
+Confirm:
 
-### Security
+- the Raspberry Pi endpoint is online
+- the selected audio output is valid
+- the endpoint can connect to the server
+- audio playback works in that room
 
-```bash
-# Restrict to local network only
-sudo ufw default deny incoming
-sudo ufw allow from 192.168.1.0/24 to any port 1704
-sudo ufw allow from 192.168.1.0/24 to any port 1705
-sudo ufw allow from 192.168.1.0/24 to any port 1780
-sudo ufw allow from 192.168.1.0/24 to any port 6600
-sudo ufw enable
-```
+The detailed commands for that verification belong in `SnapClient Pi`.
 
-### Monitoring
+### Expansion verification
 
-```bash
-# Add to crontab for health check
-*/5 * * * * curl -sf http://localhost:1780/jsonrpc -d '{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}' || systemctl restart snapserver
-```
+When adding more rooms, confirm:
 
-### Backup Configuration
+- each new endpoint joins cleanly
+- existing rooms still behave correctly
+- synchronization remains acceptable
+- control operations still behave consistently
 
-```bash
-# Backup script
-tar -czf snapforge-backup-$(date +%Y%m%d).tar.gz \
-  /path/to/snapMULTI/.env \
-  /path/to/snapMULTI/snapserver.conf \
-  /path/to/snapMULTI/mpd/
-```
+## Production Guidance
 
-### Auto-Start on Boot
+### Keep the topology simple first
 
-Server containers are configured with `restart: unless-stopped` in docker-compose.
+The safest production path is:
 
-For clients:
+- one stable server
+- one validated room endpoint
+- expand one room at a time
 
-```bash
-sudo systemctl enable snapclient
-```
+Do not treat multi-room rollout as the place to discover basic server or endpoint problems.
 
-## Next Steps
+### Keep boundaries clear
 
-1. [Add more clients](#phase-2-client-deployment-rpi-snapclient-usb)
-2. [Configure groups via SnapCTRL](#phase-3-controller-setup-snapctrl)
-3. [Set up mobile control with MPD apps](https://github.com/lollonet/snapMULTI#control-mpd)
-4. [Explore advanced configurations](ARCHITECTURE.md)
+Use `snapforge` for:
+
+- deployment strategy
+- topology choices
+- ecosystem-level guidance
+
+Use the product repos for:
+
+- installation
+- runtime configuration
+- troubleshooting commands
+- hardware-specific fixes
+
+### Keep the network local and predictable
+
+At the ecosystem level, the main operational risks are:
+
+- weak or noisy Wi-Fi
+- discovery issues
+- inconsistent network segmentation
+- trying to expose local-only control surfaces too broadly
+
+The system is best treated as a local-network-first platform.
+
+### Expand in controlled increments
+
+Each time you add:
+
+- a new room
+- a new endpoint type
+- a new controller surface
+- a new deployment host
+
+re-run the same milestone checks instead of assuming the rest of the system remains correct.
+
+## Troubleshooting Boundaries
+
+When something fails, start by classifying where the failure lives.
+
+| Symptom | Start in |
+| --- | --- |
+| Server is not reachable or sources do not work | `snapMULTI` |
+| Raspberry Pi endpoint does not connect or play | `SnapClient Pi` |
+| Fork/package artifact issue or binary behavior divergence | `Santcasp` |
+| Cross-repo confusion about topology or ownership | `snapforge` |
+
+This prevents the ecosystem repo from becoming a duplicate troubleshooting manual.
+
+## Common Deployment Mistakes
+
+- deploying multiple rooms before proving one room end to end
+- using `snapforge` as the canonical install guide
+- treating `Santcasp` as the normal user onboarding path
+- mixing ecosystem architecture with product setup steps
+- trying to solve network problems with documentation rewrites instead of verifying the actual server and endpoint owners
+
+## What To Read Next
+
+| If you want to... | Read |
+| --- | --- |
+| Understand boundaries and topology | [Architecture](ARCHITECTURE.md) |
+| Route the first deployment correctly | [Quickstart](QUICKSTART.md) |
+| Deploy the server | [`snapMULTI`](https://github.com/lollonet/snapMULTI) |
+| Deploy the Pi endpoint | [`SnapClient Pi`](https://github.com/lollonet/snapclient-pi) |
+| Work on fork/package-layer deployment | [`Santcasp`](https://github.com/lollonet/santcasp) |
+| Review hardware planning | [Hardware BOM](HARDWARE-BOM.md) |
+
+## Summary
+
+The deployment rule for SnapForge is straightforward:
+
+- deploy `snapMULTI` first
+- prove one `SnapClient Pi`
+- scale out only after the baseline is stable
+- keep implementation detail in the repo that owns it
+
+That is the cleanest way to deploy the ecosystem without letting `snapforge` drift back into a product-doc duplicate.

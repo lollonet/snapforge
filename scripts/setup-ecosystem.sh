@@ -96,29 +96,13 @@ setup_server() {
 }
 
 setup_client() {
-    log_info "Setting up rpi-snapclient-usb (client)..."
+    log_info "Setting up SnapClient Pi (client)..."
 
-    clone_repo "rpi-snapclient-usb" "$INSTALL_DIR/client"
+    clone_repo "snapclient-pi" "$INSTALL_DIR/client"
 }
 
 setup_controller() {
-    log_info "Setting up SnapCTRL (controller)..."
-
-    clone_repo "snapctrl" "$INSTALL_DIR/controller"
-
-    if [ -d "$INSTALL_DIR/controller" ]; then
-        if command -v uv &> /dev/null; then
-            log_info "Installing SnapCTRL with uv..."
-            cd "$INSTALL_DIR/controller"
-            uv pip install -e .
-        elif command -v pip &> /dev/null; then
-            log_info "Installing SnapCTRL with pip..."
-            cd "$INSTALL_DIR/controller"
-            pip install -e .
-        else
-            log_warn "Neither uv nor pip found - install SnapCTRL manually"
-        fi
-    fi
+    log_warn "SnapCTRL is distributed separately and is not provisioned by this public setup script"
 }
 
 print_summary() {
@@ -131,7 +115,7 @@ print_summary() {
     echo ""
     echo "  📦 Server:     $INSTALL_DIR/server"
     echo "  📦 Client:     $INSTALL_DIR/client"
-    echo "  📦 Controller: $INSTALL_DIR/controller"
+    echo "  📦 Controller: not provisioned by this public script"
     echo ""
     echo "Next steps:"
     echo ""
@@ -140,12 +124,14 @@ print_summary() {
     echo "     nano .env  # Set your music library paths"
     echo "     docker compose up -d"
     echo ""
-    echo "  2. Set up clients (on Raspberry Pi):"
+    echo "  2. Set up SnapClient Pi endpoints (on Raspberry Pi):"
     echo "     cd $INSTALL_DIR/client"
     echo "     ./scripts/setup.sh"
     echo ""
-    echo "  3. Run the controller:"
-    echo "     python -m snapctrl"
+    echo "  3. Use the built-in web UI first:"
+    echo "     open http://<server-ip>:1780"
+    echo ""
+    echo "  4. Native controller and mobile client availability varies by platform"
     echo ""
     echo "Documentation: https://github.com/${GITHUB_ORG}/snapforge"
     echo ""
@@ -154,7 +140,7 @@ print_summary() {
 main() {
     print_banner
 
-    echo "This script will set up the SnapForge ecosystem."
+    echo "This script will set up the SnapForge open platform."
     echo "Install directory: $INSTALL_DIR"
     echo ""
     read -p "Continue? [Y/n] " -n 1 -r
@@ -222,7 +208,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --dir PATH         Install directory (default: ~/snapforge)"
             echo "  --server-only      Install only the server component"
             echo "  --client-only      Install only the client component"
-            echo "  --controller-only  Install only the controller component"
+            echo "  --controller-only  Print controller availability note only"
             echo "  -h, --help         Show this help message"
             exit 0
             ;;

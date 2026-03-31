@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 MD022 MD032 MD040 MD060 -->
+
 # snapclient-ios
 
 **iOS client for [Snapcast](https://github.com/badaix/snapcast)** — part of the [SnapForge](https://github.com/lollonet/snapforge) ecosystem.
@@ -158,11 +160,11 @@ snapclient-ios/
 
 | Component | Repository |
 |-----------|-----------|
-| **SnapForge** (meta-repo) | [lollonet/snapforge](https://github.com/lollonet/snapforge) |
+| **SnapForge** (ecosystem repo) | [lollonet/snapforge](https://github.com/lollonet/snapforge) |
 | **snapMULTI** (server) | [lollonet/snapMULTI](https://github.com/lollonet/snapMULTI) |
-| **rpi-snapclient-usb** (Pi client) | [lollonet/rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) |
+| **SnapClient Pi** (Pi client) | [lollonet/snapclient-pi](https://github.com/lollonet/snapclient-pi) |
 | **SnapCTRL** (desktop controller) | *proprietary* |
-| **santcasp** (Snapcast fork) | [lollonet/santcasp](https://github.com/lollonet/santcasp) |
+| **Santcasp** (Snapcast fork) | [lollonet/santcasp](https://github.com/lollonet/santcasp) |
 | **Snapcast** (upstream) | [badaix/snapcast](https://github.com/badaix/snapcast) |
 
 ## License
