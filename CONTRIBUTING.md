@@ -1,111 +1,147 @@
-# Contributing to SnapForge / Contribuire a SnapForge
+<!-- markdownlint-disable MD013 -->
 
-Thank you for your interest in contributing to SnapForge!
+# Contributing to SnapForge
 
-Grazie per il tuo interesse a contribuire a SnapForge!
+SnapForge is a multi-repo ecosystem.
 
-## Project Structure / Struttura del Progetto
+This repository does not own the product code for the whole stack. It owns the ecosystem-level documentation and coordination layer.
 
-SnapForge is an ecosystem of related but independent projects:
+If you want the architecture boundaries behind this rule, read [Architecture](docs/ARCHITECTURE.md).
 
-SnapForge è un ecosistema di progetti correlati ma indipendenti:
+## What This Repository Is For
 
-| Repository | Purpose / Scopo |
-|------------|-----------------|
-| [snapforge](https://github.com/lollonet/snapforge) | Meta-repo, documentation / Meta-repo, documentazione |
-| [snapMULTI](https://github.com/lollonet/snapMULTI) | Server component / Componente server |
-| [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb) | Raspberry Pi client / Client Raspberry Pi |
-| [snapctrl](https://github.com/lollonet/snapctrl) | Desktop controller / Controller desktop |
+Contributions to `snapforge` are welcome when they improve:
 
-## Where to Contribute / Dove Contribuire
+- ecosystem documentation
+- architecture and boundary clarity
+- compatibility framing
+- roadmap wording
+- onboarding and routing docs
+- translations
+- cross-repo maps and positioning
 
-### This Repository (snapforge)
+This repository is the right place when the change explains how the ecosystem fits together.
 
-- Documentation improvements / Miglioramenti documentazione
-- New example configurations / Nuove configurazioni di esempio
-- Hardware recommendations / Raccomandazioni hardware
-- Translation improvements / Miglioramenti traduzioni
+## What Does Not Belong Here
 
-### Component Repositories
+Do not use `snapforge` for deep product changes that belong in the owning repository, such as:
 
-For code contributions, please contribute to the specific component repository:
+- server implementation changes
+- Raspberry Pi endpoint setup fixes
+- fork/package-layer implementation changes
+- mobile app implementation changes
+- desktop controller implementation changes
 
-Per contributi di codice, contribuisci al repository del componente specifico:
+If a contribution is mostly about one product, it should go to that product repository instead.
 
-- **Server issues/features**: [snapMULTI](https://github.com/lollonet/snapMULTI/issues)
-- **Client issues/features**: [rpi-snapclient-usb](https://github.com/lollonet/rpi-snapclient-usb/issues)
-- **Desktop app issues/features**: [snapctrl](https://github.com/lollonet/snapctrl/issues)
+## Where To Contribute
 
-## How to Contribute / Come Contribuire
+| If your change is about... | Go here |
+| --- | --- |
+| Ecosystem docs, maps, and cross-repo positioning | [`snapforge`](https://github.com/lollonet/snapforge) |
+| Server behavior, deployment, or source integration | [`snapMULTI`](https://github.com/lollonet/snapMULTI) |
+| Raspberry Pi endpoint behavior, hardware support, or device UX | [`snapclient-pi`](https://github.com/lollonet/snapclient-pi) |
+| Snapcast fork, packaging, or binary distribution | [`santcasp`](https://github.com/lollonet/santcasp) |
 
-### 1. Report Issues / Segnala Problemi
+The following components are currently not open for external code contributions:
 
-- Use the issue tracker of the relevant repository
-- Include: OS version, hardware details, logs, steps to reproduce
+- `SnapCTRL`
+- `SnapClient iOS`
+- `SnapClient Android`
 
-### 2. Suggest Features / Suggerisci Funzionalità
+## Before You Open A Pull Request
 
-- Open a discussion or issue first
-- Describe the use case and expected behavior
+Please make sure the change really belongs in `snapforge`.
 
-### 3. Submit Pull Requests / Invia Pull Request
+Good reasons to open a PR here:
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Make your changes
-4. Test your changes
-5. Commit with clear messages: `git commit -m "feat: add X feature"`
-6. Push to your fork: `git push origin feature/my-feature`
-7. Open a Pull Request
+- you found a wrong ecosystem boundary
+- the docs route users to the wrong repository
+- the public roadmap wording is misleading
+- the architecture docs drifted from the real repo model
+- an English or Italian translation needs correction
 
-### Commit Message Format
+Weak reasons to open a PR here:
 
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
+- you want to patch product behavior from the ecosystem repo
+- you want to add product-specific troubleshooting that belongs elsewhere
+- you want `snapforge` to duplicate the setup steps from another repo
 
-```
-feat: add new feature
-fix: fix bug in X
-docs: update documentation
-chore: update dependencies
-refactor: refactor X module
-test: add tests for Y
-```
+## Contribution Flow
 
-## Code Style / Stile del Codice
+1. Open an issue first if the change affects architecture, positioning, repo boundaries, or public roadmap wording.
+2. Fork the repository and create a focused branch.
+3. Keep the patch minimal and specific to the ecosystem-docs layer.
+4. Update both English and Italian docs when the change affects both surfaces.
+5. Run the relevant checks before opening the PR.
 
-### Python (snapctrl)
+## Pull Request Expectations
 
-- Follow PEP 8
-- Use type hints
-- Run `ruff check` and `ruff format` before committing
+A good PR to `snapforge` should:
 
-### Shell Scripts (rpi-snapclient-usb)
+- stay within the scope of this repository
+- improve clarity instead of adding noise
+- avoid duplicating product documentation
+- keep naming and boundaries consistent across docs
+- explain why the change belongs in `snapforge`
 
-- Use `shellcheck` for linting
-- Use POSIX-compatible syntax where possible
+If a PR is correct but belongs in another repository, the expected outcome is redirection, not merge.
 
-### Docker (snapMULTI)
+## Style
 
-- Use `hadolint` for Dockerfile linting
-- Prefer Alpine-based images for size
+Keep documentation:
 
-## Testing / Test
+- direct
+- technically accurate
+- explicit about ownership and boundaries
+- consistent with the current naming model
 
-Each repository has its own testing requirements. See the README of each project.
+Current naming model:
 
-Ogni repository ha i propri requisiti di test. Vedi il README di ogni progetto.
+- `SnapForge` = ecosystem brand
+- `snapMULTI` = server product
+- `Santcasp` = fork/package layer
+- `SnapClient <Platform>` = endpoint family
+- `SnapCTRL` = desktop controller
 
-## Questions / Domande
+## Checks
 
-- Open a discussion in the relevant repository
-- For general ecosystem questions, use this repository's discussions
+At minimum:
 
-## Code of Conduct / Codice di Condotta
+- verify links you changed
+- run Markdown lint on the files you touched
+- read the surrounding document so the change stays consistent
 
-Be respectful and constructive. We're all here to build something useful together.
+Do not assume `snapforge` is the place to invent new product-level rules for other repositories.
 
-Sii rispettoso e costruttivo. Siamo tutti qui per costruire qualcosa di utile insieme.
+## Questions
 
----
+Use `snapforge` issues when the question is about:
 
-Thank you for contributing! / Grazie per il tuo contributo!
+- ecosystem boundaries
+- cross-repo confusion
+- naming consistency
+- roadmap phrasing
+- documentation ownership
+
+Use the product repository when the question is about that product's behavior or setup.
+
+## Italian Summary
+
+`snapforge` e' il repo giusto per:
+
+- documentazione di ecosistema
+- mappe cross-repo
+- chiarimenti su boundary e ownership
+- naming e posizionamento
+- traduzioni
+
+`snapforge` non e' il repo giusto per:
+
+- fix implementativi di `snapMULTI`
+- setup hardware o runtime di `SnapClient Pi`
+- modifiche al fork/package layer `Santcasp`
+- codice delle app proprietarie
+
+Se una modifica spiega un prodotto in profondita, deve vivere nel repo di quel prodotto.
+Se una modifica spiega come i prodotti stanno insieme, allora appartiene a `snapforge`.

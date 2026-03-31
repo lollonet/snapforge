@@ -1,233 +1,136 @@
+<!-- markdownlint-disable MD013 MD033 MD041 -->
+
 <p align="center">
   <img src="../branding/logo.svg" alt="SnapForge" width="80">
 </p>
 
-# 5-Minute Quickstart
+# Quickstart
 
-> From zero to synchronized music in every room.
+> Start with the right component, not with the whole ecosystem at once.
 
-This guide gets you a working multiroom audio system as fast as possible.
-For detailed configuration, see the [Deployment Guide](DEPLOYMENT-GUIDE.md).
+This guide is intentionally short. Its job is to route you to the correct repository and get you to a working first step without duplicating product-specific setup instructions.
 
-## Choose your setup
+If you want the ecosystem overview first, read [README.md](../README.md).
+If you want boundaries and runtime relationships first, read [Architecture](ARCHITECTURE.md).
 
-| Setup | Hardware | What you get |
-|-------|----------|-------------|
-| **Minimal** | 1 Pi 4 + audio HAT | Server + client on the same device. One room, zero extras. |
-| **Standard** | Pi 4 + Pi per room + laptop | Dedicated server, one speaker per room, desktop controller. |
-| **Power user** | NUC + Pi clients + PC | Always-on NUC server, Pi endpoints everywhere, full SnapCTRL on your laptop. |
+## Choose Your Starting Point
 
-Not sure? Start with **Minimal** — you can add rooms later without reconfiguring anything.
+| If you want to... | Start here | Why |
+| --- | --- | --- |
+| Run the server and audio sources | [`snapMULTI`](https://github.com/lollonet/snapMULTI) | This is the server product and the canonical setup path |
+| Add a Raspberry Pi room endpoint | [`SnapClient Pi`](https://github.com/lollonet/snapclient-pi) | This is the Pi endpoint product and the canonical hardware path |
+| Use the Snapcast fork/package layer directly | [`Santcasp`](https://github.com/lollonet/santcasp) | This owns the fork rationale, packaging, and binary distribution |
+| Understand how everything fits together | [Architecture](ARCHITECTURE.md) | This explains the ecosystem boundaries and runtime roles |
 
-For the full platform support matrix, see [Architecture — Deployment Topologies](ARCHITECTURE.md#deployment-topologies).
+## Recommended First Setup
 
----
+For most people, the best first experience is:
 
-## What you'll need
+1. start with `snapMULTI`
+2. confirm the server is running and reachable
+3. add one `SnapClient Pi` room endpoint
+4. only then expand to more rooms, native clients, or controller apps
 
-| Role | Hardware | You'll install |
-|------|----------|---------------|
-| **Server** | Any Linux PC or Raspberry Pi 4 | [snapMULTI](https://github.com/lollonet/snapMULTI) |
-| **Client** (one per room) | Raspberry Pi + audio HAT or USB DAC | [rpi-snapclient](https://github.com/lollonet/rpi-snapclient-usb) |
-| **Controller** (optional) | Your laptop (macOS/Linux/Windows) | [SnapCTRL](https://github.com/lollonet/snapctrl) |
+This keeps the first install small and makes failures easier to diagnose.
 
-Don't have a Raspberry Pi? You can still try the server + controller on a single machine.
+## Fastest Path To First Sound
 
----
+### Path A: Server first
 
-## Step 1 — Start the server
+Use this if your priority is to get the core system online.
 
-On the machine that will be your server:
+Go to:
 
-```bash
-# Install Docker if you don't have it
-curl -fsSL https://get.docker.com | sh
+- [`snapMULTI`](https://github.com/lollonet/snapMULTI)
 
-# Install Avahi for network discovery
-sudo apt install -y avahi-daemon
+Follow the server setup there until you have:
 
-# Clone and start
-git clone https://github.com/lollonet/snapMULTI.git
-cd snapMULTI
-cp .env.example .env
-```
+- a running server
+- a reachable web UI
+- at least one working audio source
 
-Edit `.env` — set only these three paths:
+Stop here if you are only validating the server side.
 
-```bash
-MUSIC_LOSSLESS_PATH=/path/to/your/FLAC
-MUSIC_LOSSY_PATH=/path/to/your/MP3
-TZ=Europe/Rome
-```
+### Path B: Add one room endpoint
 
-Start it:
+Use this once the server is alive.
 
-```bash
-docker compose up -d
-```
+Go to:
 
-**Verify it works:**
+- [`SnapClient Pi`](https://github.com/lollonet/snapclient-pi)
 
-```bash
-# You should see snapserver and mpd running
-docker ps
+Follow the Pi client setup there until you have:
 
-# You should see _snapcast._tcp advertised
-avahi-browse -r _snapcast._tcp --terminate
-```
+- one Raspberry Pi endpoint online
+- one verified audio output path
+- successful playback from the server to that room
 
-Server is ready. It's discoverable on your network.
+Do not try to optimize for multiple rooms before one room works end to end.
 
----
+### Path C: Work directly with the fork/package layer
 
-## Step 2 — Add a room (Raspberry Pi client)
+Use this only if you specifically need the Snapcast fork/package layer itself.
 
-On each Raspberry Pi that has an audio HAT or USB DAC:
+Go to:
 
-```bash
-git clone https://github.com/lollonet/rpi-snapclient-usb.git
-cd rpi-snapclient-usb
-./scripts/setup.sh
-```
+- [`Santcasp`](https://github.com/lollonet/santcasp)
 
-The setup script asks you to:
-1. **Pick your audio HAT** from 11 supported models (HiFiBerry, IQaudio, JustBoom, Allo, USB...)
-2. **Pick a display resolution** if you have a screen attached (for album art)
-3. **Set a room name** (e.g., "Living Room", "Kitchen")
+This path is for:
 
-That's it. The client will:
-- Find the server automatically via mDNS (no IP to configure)
-- Start playing whatever the server is streaming
-- Show album art on the attached display
+- binary packaging
+- fork-specific runtime work
+- direct consumption of fork artifacts
 
-**Verify:**
+It is not the recommended first path for typical SnapForge users.
 
-```bash
-docker ps   # snapclient should be running
-```
+## What A Successful First Milestone Looks Like
 
-Repeat for each room.
+Your first milestone is complete when all of these are true:
 
----
+- `snapMULTI` is running
+- the server is reachable on your local network
+- one endpoint can connect and play audio
+- you can control the system from the web UI
 
-## Step 3 — Control from your desktop
+At that point, the open platform is working. Everything else is an extension of that baseline.
 
-On your laptop:
+## Native Clients And Controller
 
-```bash
-git clone https://github.com/lollonet/snapctrl.git
-cd snapctrl
-uv pip install -e .
-python -m snapctrl
-```
+The ecosystem also includes:
 
-> No `uv`? Use `pip install -e .` instead. Or just try the demo: `python demo.py`
+- `SnapCTRL`
+- `SnapClient iOS`
+- `SnapClient Android`
 
-SnapCTRL will:
-- Discover the server on your network
-- Show all connected rooms
-- Let you control volume, mute, and group rooms together
-- Show what's playing with album art
+These belong to the broader SnapForge client/control family, but they are not required for the first successful deployment of the open platform.
 
----
+Treat them as second-step components after the server and one room endpoint are working.
 
-## Step 4 — Play music
+## Common Mistakes To Avoid
 
-### From your music library (MPD)
+- starting with multiple rooms instead of proving one room first
+- treating `snapforge` as the source of truth for product setup
+- treating `Santcasp` as the main onboarding path for normal users
+- mixing ecosystem docs with product docs when troubleshooting
 
-```bash
-# On the server, index your music
-mpc update
+## Where To Go Next
 
-# Wait for indexing, then play
-mpc ls | head -1 | mpc add
-mpc play
-```
+| If you want to... | Read |
+| --- | --- |
+| Understand the ecosystem boundaries | [Architecture](ARCHITECTURE.md) |
+| See the ecosystem overview again | [README.md](../README.md) |
+| Set up the server | [`snapMULTI`](https://github.com/lollonet/snapMULTI) |
+| Set up the Raspberry Pi endpoint | [`SnapClient Pi`](https://github.com/lollonet/snapclient-pi) |
+| Work on the fork/package layer | [`Santcasp`](https://github.com/lollonet/santcasp) |
+| Review recommended hardware | [Hardware BOM](HARDWARE-BOM.md) |
+| See higher-level deployment guidance | [Deployment Guide](DEPLOYMENT-GUIDE.md) |
 
-All rooms play in perfect sync.
+## Summary
 
-### From an iPhone/iPad (AirPlay)
+The quickstart rule is simple:
 
-1. Open Control Center
-2. Tap the AirPlay icon
-3. Select "Snapcast"
-4. Play from any app — it goes to every room
+- start with `snapMULTI`
+- prove one `SnapClient Pi`
+- expand only after the open-platform baseline works
 
-### From any app (TCP stream)
-
-```bash
-# Stream internet radio to all rooms
-ffmpeg -i http://stream.radioparadise.com/flac \
-  -f s16le -ar 48000 -ac 2 tcp://YOUR_SERVER_IP:4953
-```
-
----
-
-## What just happened
-
-```
-Your Music ──→ snapMULTI server ──→ Living Room Pi  ♪
-                    │                Kitchen Pi      ♪
-                    │                Bedroom Pi      ♪
-                    │
-              SnapCTRL ←── controls volume, groups, sources
-```
-
-- **snapMULTI** receives audio from MPD, AirPlay, or TCP and distributes it via Snapcast
-- **rpi-snapclient** on each Pi receives the stream and plays it through the audio HAT
-- **SnapCTRL** talks to the server via JSON-RPC to control everything
-- **mDNS** makes all components find each other without manual IP configuration
-
-Sync accuracy is **sub-millisecond**. No more echo between rooms.
-
----
-
-## Next steps
-
-| Want to... | Read |
-|-----------|------|
-| Understand the full architecture | [Architecture](ARCHITECTURE.md) |
-| See all configuration options | [Deployment Guide](DEPLOYMENT-GUIDE.md) |
-| Choose hardware and compare costs | [Hardware BOM](HARDWARE-BOM.md) |
-| See example setups | [Home Setup](../examples/home-setup/) / [Studio Setup](../examples/studio-setup/) |
-| Control from your phone | Use any MPD client app (MALP, MPDroid, MPoD) |
-| Add Spotify Connect | Coming soon — see [Roadmap](../README.md#roadmap) |
-
----
-
-## Troubleshooting
-
-**Client doesn't find the server?**
-
-```bash
-# On the client Pi, check mDNS
-avahi-browse -r _snapcast._tcp --terminate
-
-# If nothing shows up, connect manually
-snapclient --host YOUR_SERVER_IP
-```
-
-**No audio output?**
-
-```bash
-# Check the audio device is detected
-aplay -l
-
-# Test it directly
-speaker-test -t wav -c 2
-```
-
-**SnapCTRL can't connect?**
-
-Make sure port 1780 is accessible from your laptop:
-
-```bash
-curl -s http://SERVER_IP:1780/jsonrpc \
-  -d '{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}' | jq .
-```
-
-For more, see the [Deployment Guide troubleshooting section](DEPLOYMENT-GUIDE.md#troubleshooting).
-
----
-
-**SnapForge** — self-hosted multiroom audio. [github.com/lollonet/snapforge](https://github.com/lollonet/snapforge)
+That keeps the SnapForge onboarding path clear, consistent, and aligned with the real source of truth for each component.

@@ -33,9 +33,9 @@ body:
       description: Which component does this affect?
       options:
         - snapMULTI (server)
-        - rpi-snapclient (client)
-        - SnapCTRL (desktop app)
-        - Documentation
-        - Ecosystem-wide
+        - SnapClient Pi (endpoint)
+        - Santcasp (fork/package layer)
+        - SnapCTRL / native clients
+        - Documentation / ecosystem
     validations:
       required: true

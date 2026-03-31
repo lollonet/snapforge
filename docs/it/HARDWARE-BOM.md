@@ -1,315 +1,195 @@
+<!-- markdownlint-disable MD013 MD033 MD041 MD060 -->
+
 <p align="center">
   <img src="../../branding/logo.svg" alt="SnapForge" width="80">
 </p>
 
-# Guida Hardware SnapForge
+# SnapForge Hardware BOM
 
-Bill of Materials e raccomandazioni hardware per costruire un sistema audio multiroom SnapForge.
+Questo documento elenca categorie hardware e assembly di riferimento per
+deployment della open platform SnapForge.
 
-## Riferimento Rapido: Setup Consigliati
+I prezzi sono indicativi, espressi in EUR, e possono variare in base a
+mercato, disponibilita, spedizione e imposte.
 
-### Setup Economico (~€150 totali)
+## Scope
 
-| Componente | Modello | Prezzo | Note |
-|------------|---------|--------|------|
-| Server | Qualsiasi PC Linux/NAS | €0 | Usa hardware esistente |
-| Client x3 | Raspberry Pi Zero 2 W | €15 cad. | Solo WiFi |
-| DAC x3 | DAC USB (generico) | €15 cad. | Qualità base |
-| **Totale** | | **~€90** | 3 stanze |
+| Layer | Ruolo | Owner hardware tipico |
+| --- | --- | --- |
+| `snapMULTI` | Server, sorgenti e runtime dei servizi | Host Linux, Raspberry Pi, mini PC o NAS |
+| `SnapClient Pi` | Endpoint di stanza Raspberry Pi | Board Raspberry Pi, modulo audio, storage, alimentazione |
+| `Santcasp` | Fork/package layer | Nessun requisito hardware dedicato in questo BOM |
 
-### Setup Raccomandato (~€400 totali)
+## Note di Acquisto
 
-| Componente | Modello | Prezzo | Note |
-|------------|---------|--------|------|
-| Server | Raspberry Pi 4 (4GB) | €60 | Server dedicato |
-| Client x3 | Raspberry Pi 4 (2GB) | €45 cad. | Affidabile |
-| DAC x3 | HiFiBerry DAC+ Standard | €35 cad. | Buona qualità |
-| Case x3 | Case ufficiale RPi | €10 cad. | Look pulito |
-| **Totale** | | **~€390** | 3 stanze |
+- Verificare il supporto esatto del profilo hardware nel repository owner
+  del prodotto prima dell'acquisto.
+- Per gli amplifier HAT, confermare tensione e corrente richieste rispetto
+  alla scheda tecnica del board.
+- Per i DAC USB, confermare supporto Linux kernel e enumerazione ALSA
+  stabile.
+- Il networking cablato e' opzionale a livello BOM e va scelto in base ai
+  vincoli del sito.
 
-### Setup Audiofilo (~€800 totali)
+## Host Server
 
-| Componente | Modello | Prezzo | Note |
-|------------|---------|--------|------|
-| Server | Intel NUC / Mini PC | €200 | Per librerie grandi |
-| Client x3 | Raspberry Pi 4 (4GB) | €55 cad. | Margine |
-| DAC x3 | HiFiBerry DAC2 Pro | €65 cad. | Qualità eccellente |
-| Case x3 | Allo Acrilico | €25 cad. | Look premium |
-| Alim. lineare x3 | iFi iPower | €50 cad. | Meno rumore |
-| **Totale** | | **~€785** | 3 stanze, grado audiofilo |
+| Classe host | Esempio | CPU / RAM | Storage locale | Rete | Prezzo indicativo |
+| --- | --- | --- | --- | --- | --- |
+| Host Linux esistente | PC, NAS o VM host gia presente | hardware esistente | hardware esistente | hardware esistente | 0 |
+| Raspberry Pi 4 | modello 4 GB | ARM / 4 GB | microSD o SSD | 1 GbE, Wi-Fi | 55-70 |
+| Raspberry Pi 5 | modello 4 GB | ARM / 4 GB | microSD o SSD | 1 GbE, Wi-Fi | 70-90 |
+| Mini PC | Intel NUC, Beelink, HP Mini | x86 / 8 GB+ | SSD | 1 GbE | 150-350 |
+| NAS con Docker | Synology, QNAP, simili | dipende dal NAS | dipende dal NAS | 1 GbE+ | hardware esistente |
 
-## Hardware Server
+## Hardware Core Endpoint
 
-### Opzione 1: Raspberry Pi (1-5 client)
+| Board | Memoria | Ethernet | Wi-Fi | Storage | Prezzo indicativo |
+| --- | --- | --- | --- | --- | --- |
+| Raspberry Pi Zero 2 W | 512 MB | No | Si | microSD | 15-20 |
+| Raspberry Pi 3B+ | 1 GB | 100 MbE | Si | microSD | 30-40 |
+| Raspberry Pi 4 | 2 GB | 1 GbE | Si | microSD o SSD | 45-55 |
+| Raspberry Pi 4 | 4 GB | 1 GbE | Si | microSD o SSD | 55-65 |
+| Raspberry Pi 5 | 4 GB | 1 GbE | Si | microSD o SSD | 70-90 |
 
-| Modello | RAM | Prezzo | Adatto Per |
-|---------|-----|--------|------------|
-| Pi 4 Model B (2GB) | 2GB | €45 | 1-3 client |
-| Pi 4 Model B (4GB) | 4GB | €55 | 3-5 client |
-| Pi 5 (4GB) | 4GB | €70 | 5+ client, più veloce |
+## Moduli di Uscita Audio
 
-**Pro**: Basso consumo, silenzioso, economico
-**Contro**: Limitato per librerie musicali grandi
+### DAC HAT I2S
 
-### Opzione 2: Mini PC (5-15 client)
+| Modello | Classe output | Formato nominale | Prezzo indicativo |
+| --- | --- | --- | --- |
+| HiFiBerry DAC+ Standard | Analogico RCA | 24-bit / 192 kHz | 35-40 |
+| HiFiBerry DAC+ Pro | Analogico RCA | 24-bit / 192 kHz | 45-50 |
+| HiFiBerry DAC2 Pro | Analogico RCA | 32-bit / 384 kHz | 60-70 |
+| IQaudio DAC+ | Analogico RCA | 24-bit / 192 kHz | 35-40 |
+| IQaudio DAC Pro | Analogico RCA | 24-bit / 192 kHz | 45-55 |
+| Allo Boss | Analogico RCA | 32-bit / 384 kHz | 60-70 |
+| Allo Boss2 | Analogico RCA | 32-bit / 768 kHz | 80-90 |
+| JustBoom DAC HAT | Analogico RCA | 24-bit / 192 kHz | 30-40 |
 
-| Modello | Specifiche | Prezzo | Note |
-|---------|------------|--------|------|
-| Intel NUC 12 | i3, 8GB, 256GB | €300 | Compatto, potente |
-| Beelink Mini S | N5095, 8GB | €150 | Opzione economica |
-| HP ProDesk Mini | i5, 8GB | €120 | Usato/ricondizionato |
+### Schede di Uscita Digitale
 
-**Pro**: Più potenza, può fare anche da NAS
-**Contro**: Consumo energetico maggiore
+| Modello | Uscita | Prezzo indicativo |
+| --- | --- | --- |
+| HiFiBerry Digi+ Standard | Coassiale + ottica | 30-35 |
+| HiFiBerry Digi2 Pro | Coassiale + ottica | 45-50 |
+| Allo DigiOne | Coassiale + BNC | 75-85 |
+| IQaudio DigiAMP+ | SPDIF + percorso amplificato | 50-60 |
 
-### Opzione 3: NAS/Server Esistente
+### Amplifier HAT
 
-Se hai un Synology, QNAP o altro NAS, puoi eseguire snapMULTI direttamente in Docker.
-
-**Requisiti:**
-- Supporto Docker
-- 1GB+ RAM libera
-- Rete Gigabit
-
-## Hardware Client
-
-### Modelli Raspberry Pi
-
-| Modello | Prezzo | WiFi | Ethernet | Raccomandato |
-|---------|--------|------|----------|--------------|
-| Pi Zero 2 W | €15 | Sì | No | Budget, solo WiFi |
-| Pi 3B+ | €35 | Sì | 100Mbps | Buon equilibrio |
-| Pi 4 (2GB) | €45 | Sì | Gigabit | **Raccomandato** |
-| Pi 4 (4GB) | €55 | Sì | Gigabit | A prova di futuro |
-| Pi 5 (4GB) | €70 | Sì | Gigabit | Eccessivo per audio |
-
-**Raccomandazione**: Raspberry Pi 4 (2GB) offre il miglior rapporto qualità/prezzo per client audio.
-
-### SBC Alternative
-
-| Scheda | Prezzo | Note |
-|--------|--------|------|
-| Orange Pi Zero 2 | €25 | Economico, funziona |
-| ODROID-C4 | €50 | Buon supporto audio |
-| Rock Pi 4 | €60 | Alternativa a RPi 4 |
-
-## DAC Audio
-
-### HAT I2S (Migliore Qualità)
-
-| Modello | Prezzo | Bit/kHz | THD+N | Note |
-|---------|--------|---------|-------|------|
-| **HiFiBerry DAC+ Standard** | €35 | 24/192 | -93dB | **Miglior valore** |
-| HiFiBerry DAC+ Pro | €45 | 24/192 | -100dB | Clock migliorato |
-| HiFiBerry DAC2 Pro | €65 | 32/384 | -112dB | Audiofilo |
-| IQaudio DAC+ | €35 | 24/192 | -96dB | Buona alternativa |
-| IQaudio DAC Pro | €50 | 24/192 | -102dB | Uscita RCA |
-| Allo Boss | €65 | 32/384 | -112dB | Eccellente |
-| Allo Boss2 | €85 | 32/768 | -120dB | Top di gamma |
-| JustBoom DAC HAT | €35 | 24/192 | -94dB | Economico |
-
-**Raccomandazione**: HiFiBerry DAC+ Standard per la maggior parte degli utenti. DAC2 Pro o Allo Boss per audiofili.
-
-### Uscita Digitale (S/PDIF)
-
-Per connessione a DAC esterni:
-
-| Modello | Prezzo | Uscita | Note |
-|---------|--------|--------|------|
-| HiFiBerry Digi+ Standard | €30 | Coax + Ottico | Buono |
-| HiFiBerry Digi2 Pro | €45 | Coax + Ottico | Clock migliore |
-| Allo DigiOne | €80 | Coax + BNC | Audiofilo |
-| IQaudio DigiAMP+ | €55 | + Amplificatore | All-in-one |
+| Modello | Output nominale | Tipo diffusori | Prezzo indicativo |
+| --- | --- | --- | --- |
+| HiFiBerry Amp2 | 2 x 30 W | Diffusori passivi | 50-60 |
+| IQaudio DigiAMP+ | 2 x 35 W | Diffusori passivi | 50-60 |
+| JustBoom Amp HAT | 2 x 30 W | Diffusori passivi | 45-55 |
+| HiFiBerry Amp3 | 2 x 60 W | Diffusori passivi | 60-70 |
 
 ### DAC USB
 
-Per semplicità o quando I2S non è disponibile:
+| Modello | Classe output | Prezzo indicativo |
+| --- | --- | --- |
+| DAC USB generico | Analogico / cuffie | 10-20 |
+| FiiO E10K | Analogico / cuffie | 70-90 |
+| Topping D10s | Line-out analogico | 90-110 |
+| SMSL M100 | Line-out analogico | 70-90 |
 
-| Modello | Prezzo | Qualità | Note |
-|---------|--------|---------|------|
-| DAC USB generico | €10-20 | Base | Funziona |
-| FiiO E10K | €80 | Buona | Anche amplificatore cuffie |
-| Topping D10s | €100 | Eccellente | Re delle misurazioni |
-| SMSL M100 | €80 | Molto buona | Compatto |
+## Alimentazione, Storage e Accessori
 
-### HAT Amplificatore
+### Alimentatori
 
-Soluzioni all-in-one con amplificazione integrata:
+| Modello | Uso | Output nominale | Prezzo indicativo |
+| --- | --- | --- | --- |
+| Alimentatore ufficiale Raspberry Pi | Board Raspberry Pi | 5 V | 10-15 |
+| Alimentatore multi-porta Anker | Piu nodi a basso assorbimento | 5 V | 15-25 |
+| iFi iPower 5V | Board Raspberry Pi | 5 V | 45-55 |
+| Allo Shanti | Doppia rail low-noise | 5 V + 5 V | 75-90 |
+| Mean Well GST60A | Deployment con amplifier HAT | 18 V / 3.3 A | 20-30 |
+| iFi iPower X | Alimentazione amplifier / DAC | dipende dal modello | 60-80 |
+| Allo Nirvana | Alimentazione low-noise | dipende dal modello | 90-110 |
 
-| Modello | Prezzo | Potenza | Diffusori |
-|---------|--------|---------|-----------|
-| HiFiBerry Amp2 | €55 | 2x30W | Passivi |
-| IQaudio DigiAMP+ | €55 | 2x35W | Passivi |
-| JustBoom Amp HAT | €50 | 2x30W | Passivi |
-| HiFiBerry Amp3 | €65 | 2x60W | Passivi |
+### Storage
 
-**Caso d'uso**: Cucina, bagno, laboratorio dove vuoi diffusori passivi semplici.
+| Modello | Capacita | Uso | Prezzo indicativo |
+| --- | --- | --- | --- |
+| SanDisk Extreme | 32 GB | Boot media endpoint | 10-15 |
+| Samsung EVO Plus | 64 GB | Boot media endpoint | 12-18 |
+| SanDisk Industrial | 16 GB | Boot media endpoint | 18-25 |
+| SSD USB | 120-250 GB | Storage locale server | 20-40 |
 
-## Alimentatori
+### Rete e Case
 
-### Standard (5V per RPi)
+| Item | Uso | Prezzo indicativo |
+| --- | --- | --- |
+| Cavo patch Cat6 | Uplink endpoint cablato | 5-10 |
+| Switch gigabit 5 porte | Piccolo cluster endpoint | 20-30 |
+| Case ufficiale Raspberry Pi | Enclosure standard | 8-12 |
+| Argon ONE | Enclosure metallico | 20-30 |
+| Flirc case | Enclosure passivo | 15-20 |
+| HiFiBerry steel case | Enclosure per HAT HiFiBerry | 18-25 |
+| Case acrilico generico | Enclosure HAT generico | 10-15 |
 
-| Tipo | Prezzo | Note |
-|------|--------|------|
-| Alimentatore ufficiale RPi | €10 | Adeguato |
-| Anker PowerPort | €15 | Multi-dispositivo |
-| iFi iPower 5V | €50 | Basso rumore, audiofilo |
-| Allo Shanti | €80 | Doppio rail, eccellente |
+### Display Opzionali
 
-**Raccomandazione**: Alimentatore ufficiale va bene per la maggior parte. iFi iPower per setup esigenti.
+| Modello | Risoluzione / dimensione | Uso | Prezzo indicativo |
+| --- | --- | --- | --- |
+| Waveshare 3.5" LCD | 480 x 320 | Display locale compatto | 20-30 |
+| Pimoroni HyperPixel | 800 x 480 | Display locale a risoluzione maggiore | 45-55 |
+| Display HDMI 7" | dipende dal modello | Nodo tabletop con display | 35-50 |
 
-### Per HAT Amplificatore (Potenza Maggiore)
+## Assembly di Riferimento
 
-| Modello | Prezzo | Output | Note |
-|---------|--------|--------|------|
-| Mean Well GST60A | €25 | 18V/3.3A | Economico |
-| iFi iPower X | €70 | Vari | Basso rumore |
-| Allo Nirvana | €100 | 5V+5V | Audiofilo |
+### Assembly A: Solo Server
 
-## Case
+| Item | Qta | Prezzo unitario | Prezzo esteso |
+| --- | --- | --- | --- |
+| Raspberry Pi 4 (4 GB) | 1 | 60 | 60 |
+| Alimentatore ufficiale Raspberry Pi | 1 | 12 | 12 |
+| microSD 32 GB | 1 | 12 | 12 |
+| Case | 1 | 10 | 10 |
+| **Totale** |  |  | **94** |
 
-### Funzionali
+### Assembly B: Endpoint Singolo
 
-| Modello | Prezzo | Note |
-|---------|--------|------|
-| Case ufficiale RPi | €8 | Base |
-| Argon ONE | €25 | Alluminio, raffreddamento passivo |
-| Flirc Case | €15 | Raffreddamento passivo |
+| Item | Qta | Prezzo unitario | Prezzo esteso |
+| --- | --- | --- | --- |
+| Raspberry Pi 4 (2 GB) | 1 | 50 | 50 |
+| HiFiBerry DAC+ Standard | 1 | 38 | 38 |
+| Alimentatore ufficiale Raspberry Pi | 1 | 12 | 12 |
+| microSD 32 GB | 1 | 12 | 12 |
+| Case compatibile con HAT | 1 | 20 | 20 |
+| **Totale** |  |  | **132** |
 
-### Con Supporto HAT
+### Assembly C: Open Platform, Tre Stanze
 
-| Modello | Prezzo | Compatibilità |
-|---------|--------|---------------|
-| HiFiBerry Steel Case | €20 | HAT HiFiBerry |
-| Allo Acrylic Case | €25 | DAC Allo |
-| Acrilico generico | €10 | La maggior parte degli HAT |
+| Item | Qta | Prezzo unitario | Prezzo esteso |
+| --- | --- | --- | --- |
+| Host server su hardware Linux esistente | 1 | 0 | 0 |
+| Raspberry Pi 4 (2 GB) | 3 | 50 | 150 |
+| HiFiBerry DAC+ Standard | 3 | 38 | 114 |
+| Alimentatore ufficiale Raspberry Pi | 3 | 12 | 36 |
+| microSD 32 GB | 3 | 12 | 36 |
+| Case compatibile con HAT | 3 | 20 | 60 |
+| Switch gigabit 5 porte | 1 | 25 | 25 |
+| **Totale** |  |  | **421** |
 
-### Premium
+### Assembly D: Tre Endpoint Amplificati
 
-| Modello | Prezzo | Note |
-|---------|--------|------|
-| Allo USBridge Sig. | €250 | Soluzione completa |
-| Pro-Ject Stream Box | €400 | Qualità commerciale |
+| Item | Qta | Prezzo unitario | Prezzo esteso |
+| --- | --- | --- | --- |
+| Host server su hardware Linux esistente | 1 | 0 | 0 |
+| Raspberry Pi 4 (2 GB) | 3 | 50 | 150 |
+| HiFiBerry Amp2 | 3 | 55 | 165 |
+| Alimentatore 18 V | 3 | 25 | 75 |
+| microSD 32 GB | 3 | 12 | 36 |
+| Case | 3 | 15 | 45 |
+| Switch gigabit 5 porte | 1 | 25 | 25 |
+| **Totale** |  |  | **496** |
 
-## Accessori
+## Boundary di Ownership Hardware
 
-### Schede SD
-
-| Modello | Dimensione | Prezzo | Note |
-|---------|------------|--------|------|
-| SanDisk Extreme | 32GB | €12 | **Raccomandato** |
-| Samsung EVO Plus | 64GB | €15 | Buona durata |
-| SanDisk Industrial | 16GB | €20 | Massima affidabilità |
-
-### Rete
-
-| Articolo | Prezzo | Note |
-|----------|--------|------|
-| Cavo Cat6 | €5/5m | Per client cablati |
-| Switch TP-Link | €20 | Gigabit 5 porte |
-| Bridge Ethernet-WiFi | €30 | Per punti difficili da cablare |
-
-### Display (Opzionale)
-
-Per visualizzazione copertine album:
-
-| Modello | Prezzo | Dimensione | Note |
-|---------|--------|------------|------|
-| Waveshare 3.5" LCD | €25 | 480x320 | Base |
-| Pimoroni HyperPixel | €50 | 800x480 | Alta qualità |
-| Display HDMI mini | €40 | 7" | Per tavolo |
-
-## Configurazioni di Esempio
-
-### Configurazione A: Soggiorno (Hi-Fi)
-
-```
-Raspberry Pi 4 (4GB)        €55
-HiFiBerry DAC2 Pro          €65
-Allo Acrylic Case           €25
-iFi iPower 5V               €50
-SanDisk Extreme 32GB        €12
-───────────────────────────────
-Totale                     €207
-```
-
-Connetti all'amplificatore/diffusori esistenti via RCA.
-
-### Configurazione B: Cucina (All-in-one)
-
-```
-Raspberry Pi 4 (2GB)        €45
-HiFiBerry Amp2              €55
-Diffusori passivi (coppia)  €50
-Case ufficiale (modificato) €10
-Alimentatore ufficiale 15W  €12
-SanDisk Extreme 32GB        €12
-───────────────────────────────
-Totale                     €184
-```
-
-Sistema autocontenuto, basta aggiungere corrente.
-
-### Configurazione C: Camera da Letto (Economica)
-
-```
-Raspberry Pi Zero 2 W       €15
-DAC USB (generico)          €15
-Casse attive (2.0)          €40
-Case generico               €5
-Alimentatore 5V 2A          €8
-SanDisk 16GB                €8
-───────────────────────────────
-Totale                      €91
-```
-
-Setup funzionale più economico.
-
-### Configurazione D: Studio/Ufficio (Desktop)
-
-```
-Raspberry Pi 4 (2GB)        €45
-Topping D10s DAC USB       €100
-(connetti ad amplificatore esistente)
-Argon ONE case              €25
-Alimentatore ufficiale      €10
-SanDisk Extreme 32GB        €12
-───────────────────────────────
-Totale                     €192
-```
-
-DAC di alta qualità per ascolto critico.
-
-## Dove Comprare
-
-### Europa
-
-| Negozio | Paese | Note |
-|---------|-------|------|
-| [BerryBase](https://www.berrybase.de) | DE | Ampia selezione |
-| [The Pi Hut](https://thepihut.com) | UK | Rivenditore ufficiale |
-| [Kubii](https://kubii.com) | FR | Buoni prezzi |
-| [Melopero](https://melopero.com) | IT | Rivenditore italiano |
-| [HiFiBerry](https://hifiberry.com) | CH | Diretto |
-| [Allo](https://allo.com) | Vari | Diretto |
-
-### Mondo
-
-| Negozio | Note |
-|---------|------|
-| [Amazon](https://amazon.it) | Tutto |
-| [AliExpress](https://aliexpress.com) | Opzioni economiche |
-| [Audiophonics](https://audiophonics.fr) | Gear audiofilo |
-
-## Confronto Costi vs Commerciale
-
-| Sistema | 3 Stanze | 5 Stanze | Note |
-|---------|----------|----------|------|
-| **SnapForge (economico)** | €150 | €230 | DIY |
-| **SnapForge (raccomandato)** | €400 | €600 | DIY |
-| **SnapForge (audiofilo)** | €800 | €1200 | DIY |
-| Sistemi commerciali | €600+ | €1000+ | Ecosistema chiuso |
-| Bluesound | €900+ | €1500+ | Qualità migliore |
-| Bose SoundTouch | €700+ | €1100+ | Discontinuato |
-
-**Vantaggio SnapForge**: Open source, aggiornabile, riparabile, nessun abbonamento.
+| Tema | Source of truth |
+| --- | --- |
+| Deployment server e requisiti runtime | `snapMULTI` |
+| Profili hardware endpoint Raspberry Pi | `SnapClient Pi` |
+| Packaging binari specifico del fork | `Santcasp` |
+| Framing inventariale a livello ecosistema | `snapforge` |
