@@ -121,6 +121,7 @@ Questa roadmap e' volutamente high-level. Serve a mostrare la direzione, non a s
 | --- | --- |
 | [Quickstart](docs/QUICKSTART.md) | Guida rapida che instrada verso il componente giusto |
 | [Architettura](docs/it/ARCHITECTURE.md) | Struttura dell'ecosistema e boundary tra componenti |
+| [Compatibilita](docs/it/COMPATIBILITY.md) | Ruoli componenti, relazioni cross-repo e ownership del supporto |
 | [Deployment Guide](docs/it/DEPLOYMENT-GUIDE.md) | Flusso di deployment e verifica a livello alto |
 | [Hardware BOM](docs/it/HARDWARE-BOM.md) | Hardware consigliato e ordine di grandezza dei costi |
 | [Contributing](CONTRIBUTING.md) | Dove devono vivere i contributi nell'ecosistema |
