@@ -122,6 +122,7 @@ This roadmap is intentionally high-level. It is meant to show direction, not to 
 | [Quickstart](docs/QUICKSTART.md) | Fast routing guide into the right component |
 | [Architecture](docs/ARCHITECTURE.md) | Ecosystem structure and component boundaries |
 | [Compatibility](docs/COMPATIBILITY.md) | Component roles, cross-repo relationships, and support ownership |
+| [Editorial Policy](docs/EDITORIAL-POLICY.md) | Admission filter for what does and does not belong in `snapforge` |
 | [Deployment Guide](docs/DEPLOYMENT-GUIDE.md) | Higher-level deployment flow and verification |
 | [Hardware BOM](docs/HARDWARE-BOM.md) | Recommended hardware and cost framing |
 | [Contributing](CONTRIBUTING.md) | Where contributions belong across the ecosystem |

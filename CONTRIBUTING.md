@@ -7,6 +7,7 @@ SnapForge is a multi-repo ecosystem.
 This repository does not own the product code for the whole stack. It owns the ecosystem-level documentation and coordination layer.
 
 If you want the architecture boundaries behind this rule, read [Architecture](docs/ARCHITECTURE.md).
+If you want the short admission filter for new content, read [Editorial Policy](docs/EDITORIAL-POLICY.md).
 
 ## What This Repository Is For
 
@@ -59,6 +60,7 @@ Good reasons to open a PR here:
 - the docs route users to the wrong repository
 - the public roadmap wording is misleading
 - the architecture docs drifted from the real repo model
+- the content passes the editorial filter in [Editorial Policy](docs/EDITORIAL-POLICY.md)
 - an English or Italian translation needs correction
 
 Weak reasons to open a PR here:
